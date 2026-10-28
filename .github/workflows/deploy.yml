@@ -52,6 +52,10 @@ jobs:
   deploy:
     name: Deploy
     needs: build
+    # The github-pages environment only permits the protected default
+    # branches; on other branches the build still runs as a CI check while
+    # the deploy job is skipped instead of failing the run.
+    if: github.ref == 'refs/heads/test' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
