@@ -315,12 +315,19 @@
   justify-content: center;
   backdrop-filter: blur(8px);
   cursor: pointer;
+  flex: none;
 }
 .stage-controls button.active {
   background: var(--accent);
   color: #fff;
 }
 .stage-controls button:active { transform: scale(0.94); }
+.stage-controls-panel {
+  display: flex;
+  gap: 8px;
+}
+/* The collapse toggle only exists for narrow screens. */
+.stage-controls-toggle { display: none; }
 
 .stage-hint {
   position: absolute;
@@ -333,8 +340,30 @@
 }
 
 @media (max-width: 520px) {
-  .stage-controls { right: 8px; top: 8px; gap: 6px; }
-  .stage-controls button {
+  /* On phones the device frame nearly fills the viewport, so the four
+     helper buttons collapse behind a single toggle and expand as a
+     floating popover instead of permanently covering the screen. */
+  .stage-controls { right: 8px; top: 8px; }
+  .stage-controls-toggle {
+    display: flex;
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+  }
+  .stage-controls-panel {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 14px;
+    background: rgba(18, 18, 22, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    display: none;
+  }
+  .stage-controls.open .stage-controls-panel { display: flex; }
+  .stage-controls-panel button {
     width: 32px;
     height: 32px;
     border-radius: 10px;

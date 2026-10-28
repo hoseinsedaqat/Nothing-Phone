@@ -139,11 +139,14 @@ for (const vp of VIEWPORTS) {
     });
 
     await guarded('06-glyph-back', async () => {
+      // On phone viewports the stage controls collapse behind a toggle.
+      await page.getByRole('button', { name: 'Stage controls' }).click().catch(() => {});
       await page.getByRole('button', { name: 'Flip phone' }).click();
       await page.waitForTimeout(800);
       await page.screenshot({ path: join(out, '06-glyph-back.png') });
       await page.getByRole('button', { name: 'Front view' }).click();
       await page.waitForTimeout(500);
+      await page.getByRole('button', { name: 'Stage controls' }).click().catch(() => {});
     });
 
     await guarded('07-always-on-display', async () => {

@@ -2,7 +2,7 @@
 
 # 📱 Nothing Phone (3) Simulator — Interactive Nothing OS 5.0 in Your Browser
 
-![Nothing Phone (3) web simulator social preview](docs/social-preview.png)
+![Nothing Phone (3) simulator — real render of the desktop stage](docs/screenshots/09-desktop-stage.png)
 
 **A pixel-faithful, fully interactive web simulation of the Nothing Phone (3) running Nothing OS 5.0 — built with React, TypeScript and the Web Audio API. No backend, no native build, runs 100% in the browser and installs as an offline PWA.**
 
@@ -24,6 +24,7 @@
 
 - [What is this?](#what-is-this)
 - [Live demo](#live-demo)
+- [Screenshots](#screenshots)
 - [Feature tour](#feature-tour)
 - [The 16 built-in apps](#the-16-built-in-apps)
 - [Tech stack](#tech-stack)
@@ -61,6 +62,31 @@ speaker grilles and antenna bands.
 
 Deployed automatically from the `test` branch via GitHub Actions. Open it on desktop or mobile,
 or use your browser's **"Install app" / "Add to Home screen"** option to run it as a standalone PWA.
+
+## Screenshots
+
+Every image below is a **real, unedited render of this project** — the actual React app driven by
+Playwright in CI (`.github/workflows/screenshots.yml`), not mockups, stock art or edited
+composites. The machine-readable responsive report lives next to them at
+[`docs/screenshots/responsive-audit.json`](docs/screenshots/responsive-audit.json).
+
+<table>
+<tr>
+<td align="center" width="33%"><img src="docs/screenshots/01-lock-screen.png" alt="Lock screen with LED dot-matrix clock" width="260"><br><sub>Lock screen · LED dot-matrix clock</sub></td>
+<td align="center" width="33%"><img src="docs/screenshots/02-home-screen.png" alt="Home screen with widgets and dock" width="260"><br><sub>Home screen · widgets & dock</sub></td>
+<td align="center" width="33%"><img src="docs/screenshots/03-control-center.png" alt="Control center with quick toggles and sliders" width="260"><br><sub>Control center · toggles & sliders</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/04-calculator.png" alt="Calculator app" width="260"><br><sub>Calculator · Nothing-red keypad</sub></td>
+<td align="center"><img src="docs/screenshots/05-calculator-result.png" alt="Calculator showing 7 × 6 = 42" width="260"><br><sub>Calculator · 7 × 6 = 42</sub></td>
+<td align="center"><img src="docs/screenshots/06-glyph-back.png" alt="Glyph Matrix rear view, simulated LED display" width="260"><br><sub>Glyph Matrix · simulated LEDs</sub></td>
+</tr>
+<tr>
+<td align="center"><img src="docs/screenshots/07-always-on-display.png" alt="Always-on display with dim clock" width="260"><br><sub>Always-On Display · tap to wake</sub></td>
+<td align="center"><img src="docs/screenshots/08-small-viewport.png" alt="Full hardware frame fitting a 320 by 568 viewport" width="260"><br><sub>Small phone · 320×568, full frame</sub></td>
+<td align="center"><img src="docs/screenshots/09-desktop-stage.png" alt="Desktop stage at 1440 by 900" width="260"><br><sub>Desktop stage · 1440×900</sub></td>
+</tr>
+</table>
 
 ## Feature tour
 
@@ -307,8 +333,18 @@ Automatically deployed to **GitHub Pages** on every push to `test`/`main` via
 so all assets resolve correctly under the `/Nothing-Phone/` project subpath. The deploy job is
 skipped on feature branches to respect the protected Pages environment.
 
-The 1280×640 social preview at `docs/social-preview.png` is regenerated from its SVG source with
-`npm run social` (dev-only `@resvg/resvg-js` rasterizer).
+### Screenshot & responsive-audit workflow
+
+Pushes to `arena/**` branches (plus manual dispatch) trigger
+`.github/workflows/screenshots.yml`: it builds the app, runs Playwright Chromium against the
+production preview at **390×844, 320×568 and 1440×900**, writes nine real-render PNGs plus
+`docs/screenshots/responsive-audit.json` (horizontal-overflow, frame-fit and screen-size checks),
+and commits the refreshed captures back to the branch. The README gallery above is generated
+entirely from these genuine captures — no mockup or placeholder imagery.
+
+The 1280×640 social banner at `docs/social-preview.png` (a designed OG/link-preview asset, not a
+product screenshot) is regenerated from its SVG source with `npm run social`
+(dev-only `@resvg/resvg-js` rasterizer).
 
 ## Contributing
 
