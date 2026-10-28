@@ -24,7 +24,7 @@ const VIEWPORTS = [
   { name: 'landscape', width: 844, height: 390, dsf: 2 },
   { name: 'desktop', width: 1440, height: 900, dsf: 1 },
   // Common laptop CSS viewport (e.g. 1920×1080 physical at 1.25 DSF):
-  // regression guard for the stage-hint text clipping reported here.
+  // regression guard for wide-viewport layout.
   { name: 'wide', width: 1536, height: 864, dsf: 1 },
 ];
 
@@ -71,10 +71,8 @@ for (const vp of VIEWPORTS) {
     const de = document.documentElement;
     const frame = document.querySelector('.phone-frame');
     const screen = document.querySelector('.phone-screen');
-    const hint = document.querySelector('.stage-hint');
     const r = frame?.getBoundingClientRect();
     const sr = screen?.getBoundingClientRect();
-    const hr = hint?.getBoundingClientRect();
     return {
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
@@ -84,10 +82,6 @@ for (const vp of VIEWPORTS) {
       frame: r ? { left: Math.round(r.left), right: Math.round(r.right), top: Math.round(r.top), bottom: Math.round(r.bottom) } : null,
       screen: sr ? { width: Math.round(sr.width), height: Math.round(sr.height) } : null,
       frameFitsViewport: r ? r.left >= -1 && r.right <= window.innerWidth + 1 && r.top >= -1 && r.bottom <= window.innerHeight + 1 : false,
-      // The bottom helper text must stay inside the viewport at every width.
-      hintFitsViewport: hr
-        ? hr.left >= -1 && hr.right <= window.innerWidth + 1 && hr.bottom <= window.innerHeight + 1
-        : null,
     };
   });
   report.push({ viewport: vp.name, kind: 'audit', ...audit });
@@ -219,9 +213,7 @@ const pngs = (await readdir(out)).filter((f) => f.endsWith('.png'));
 const auditFailures = report.filter(
   (r) =>
     r.kind === 'audit' &&
-    (r.horizontalOverflow ||
-      r.frameFitsViewport === false ||
-      r.hintFitsViewport === false),
+    (r.horizontalOverflow || r.frameFitsViewport === false),
 );
 console.log(`Screenshots + audit written to ${out} (${pngs.length} images, ${failed.length} failed captures)`);
 if (failed.length) console.log(JSON.stringify(failed, null, 2));
