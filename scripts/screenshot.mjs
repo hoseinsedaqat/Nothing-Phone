@@ -23,6 +23,9 @@ const VIEWPORTS = [
   { name: 'small', width: 320, height: 568, dsf: 2 },
   { name: 'landscape', width: 844, height: 390, dsf: 2 },
   { name: 'desktop', width: 1440, height: 900, dsf: 1 },
+  // Common laptop CSS viewport (e.g. 1920×1080 physical at 1.25 DSF):
+  // regression guard for the stage-hint text clipping reported here.
+  { name: 'wide', width: 1536, height: 864, dsf: 1 },
 ];
 
 const report = [];
@@ -68,8 +71,10 @@ for (const vp of VIEWPORTS) {
     const de = document.documentElement;
     const frame = document.querySelector('.phone-frame');
     const screen = document.querySelector('.phone-screen');
+    const hint = document.querySelector('.stage-hint');
     const r = frame?.getBoundingClientRect();
     const sr = screen?.getBoundingClientRect();
+    const hr = hint?.getBoundingClientRect();
     return {
       innerWidth: window.innerWidth,
       innerHeight: window.innerHeight,
@@ -79,6 +84,10 @@ for (const vp of VIEWPORTS) {
       frame: r ? { left: Math.round(r.left), right: Math.round(r.right), top: Math.round(r.top), bottom: Math.round(r.bottom) } : null,
       screen: sr ? { width: Math.round(sr.width), height: Math.round(sr.height) } : null,
       frameFitsViewport: r ? r.left >= -1 && r.right <= window.innerWidth + 1 && r.top >= -1 && r.bottom <= window.innerHeight + 1 : false,
+      // The bottom helper text must stay inside the viewport at every width.
+      hintFitsViewport: hr
+        ? hr.left >= -1 && hr.right <= window.innerWidth + 1 && hr.bottom <= window.innerHeight + 1
+        : null,
     };
   });
   report.push({ viewport: vp.name, kind: 'audit', ...audit });
@@ -191,6 +200,14 @@ for (const vp of VIEWPORTS) {
     });
   }
 
+  if (vp.name === 'wide') {
+    await guarded('11-wide-viewport', async () => {
+      await page.locator('.lock-screen').click().catch(() => {});
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: join(out, '11-wide-viewport.png') });
+    });
+  }
+
   await ctx.close();
 }
 
@@ -198,8 +215,20 @@ await browser.close();
 await writeFile(join(out, 'responsive-audit.json'), JSON.stringify(report, null, 2));
 const failed = report.filter((r) => r.ok === false);
 const pngs = (await readdir(out)).filter((f) => f.endsWith('.png'));
+// Hard audit failures: layout must never overflow or clip at any viewport.
+const auditFailures = report.filter(
+  (r) =>
+    r.kind === 'audit' &&
+    (r.horizontalOverflow ||
+      r.frameFitsViewport === false ||
+      r.hintFitsViewport === false),
+);
 console.log(`Screenshots + audit written to ${out} (${pngs.length} images, ${failed.length} failed captures)`);
 if (failed.length) console.log(JSON.stringify(failed, null, 2));
+if (auditFailures.length) {
+  console.error('Responsive audit failures:', JSON.stringify(auditFailures, null, 2));
+  process.exit(1);
+}
 // A total failure (server down, selectors all broken) should fail the job;
 // individual flaky captures are recorded in the audit instead.
 if (pngs.length === 0) process.exit(1);
