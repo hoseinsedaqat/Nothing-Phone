@@ -133,7 +133,9 @@
   border-color: rgba(0, 0, 0, 0.08);
 }
 .dock {
-  margin: 0 14px 10px;
+  /* Reserve the gesture-navigation strip so dock icons never sit under
+     the back/recents buttons or the home pill. */
+  margin: 0 14px 58px;
   padding: 12px 10px;
   border-radius: 30px;
   background: rgba(18, 18, 21, 0.62);

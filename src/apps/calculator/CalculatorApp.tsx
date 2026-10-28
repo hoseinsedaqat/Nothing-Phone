@@ -99,10 +99,12 @@ export default function CalculatorApp() {
         ))}
       </div>
       <div className="calc-display">
-        <small>{prev !== null && op ? `${prev} ${op}` : ''}</small>
-        <strong>{display}</strong>
+        <div className="calc-display-text">
+          <small>{prev !== null && op ? `${prev} ${op}` : ''}</small>
+          <strong>{display}</strong>
+        </div>
         <button className="calc-back" onClick={backspace} aria-label="Backspace">
-          <Delete size={20} />
+          <Delete size={19} />
         </button>
       </div>
       <div className="calc-grid">

@@ -3,11 +3,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 52px;
+  height: 54px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  padding: 0 22px;
+  padding: 0 20px 9px;
   z-index: 290;
   pointer-events: none; /* let gestures pass through the gaps */
 }
@@ -18,19 +18,19 @@
   font-family: inherit;
 }
 
-/* Flanking glass buttons — faintly visible at rest, fully lit on hover/press */
+/* Flanking glass buttons — hug the bottom corners, subtle at rest */
 .nav-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text);
-  background: rgba(120, 120, 128, 0.16);
+  background: rgba(120, 120, 128, 0.14);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  opacity: 0.55;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 0.45;
   transition:
     opacity 160ms ease,
     background 160ms ease,
@@ -51,20 +51,20 @@
   border-color: transparent;
 }
 [data-theme='light'] .nav-btn {
-  background: rgba(60, 60, 67, 0.1);
-  border-color: rgba(0, 0, 0, 0.06);
+  background: rgba(60, 60, 67, 0.09);
+  border-color: rgba(0, 0, 0, 0.05);
 }
 [data-theme='light'] .nav-btn:hover {
   background: rgba(60, 60, 67, 0.2);
 }
 
-/* Home pill — the Nothing gesture handle */
+/* Home pill — the Nothing gesture handle, centered in the bottom strip */
 .nav-pill {
   position: absolute;
   left: 50%;
-  bottom: 15px;
+  bottom: 11px;
   transform: translateX(-50%);
-  width: 138px;
+  width: 132px;
   height: 22px;
   background: transparent;
   display: flex;
@@ -74,7 +74,7 @@
 }
 .nav-pill-inner {
   display: block;
-  width: 124px;
+  width: 118px;
   height: 5px;
   border-radius: 5px;
   background: var(--text);
@@ -84,10 +84,10 @@
     opacity 160ms ease;
 }
 .nav-pill:hover .nav-pill-inner {
-  width: 132px;
+  width: 128px;
   opacity: 1;
 }
 .nav-pill:active .nav-pill-inner {
-  width: 92px;
+  width: 88px;
   opacity: 0.7;
 }
