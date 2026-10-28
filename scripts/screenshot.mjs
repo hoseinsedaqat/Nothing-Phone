@@ -21,6 +21,7 @@ const BASE = process.env.BASE_URL ?? 'http://localhost:4173';
 const VIEWPORTS = [
   { name: 'mobile', width: 390, height: 844, dsf: 2 },
   { name: 'small', width: 320, height: 568, dsf: 2 },
+  { name: 'landscape', width: 844, height: 390, dsf: 2 },
   { name: 'desktop', width: 1440, height: 900, dsf: 1 },
 ];
 
@@ -165,6 +166,14 @@ for (const vp of VIEWPORTS) {
   if (vp.name === 'small') {
     await guarded('08-small-viewport', async () => {
       await page.screenshot({ path: join(out, '08-small-viewport.png') });
+    });
+  }
+
+  if (vp.name === 'landscape') {
+    await guarded('10-landscape-stage', async () => {
+      await page.locator('.lock-screen').click().catch(() => {});
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: join(out, '10-landscape-stage.png') });
     });
   }
 

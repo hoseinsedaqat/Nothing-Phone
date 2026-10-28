@@ -86,6 +86,9 @@ composites. The machine-readable responsive report lives next to them at
 <td align="center"><img src="docs/screenshots/08-small-viewport.png" alt="Full hardware frame fitting a 320 by 568 viewport" width="260"><br><sub>Small phone · 320×568, full frame</sub></td>
 <td align="center"><img src="docs/screenshots/09-desktop-stage.png" alt="Desktop stage at 1440 by 900" width="260"><br><sub>Desktop stage · 1440×900</sub></td>
 </tr>
+<tr>
+<td align="center" colspan="3"><img src="docs/screenshots/10-landscape-stage.png" alt="Landscape phone viewport at 844 by 390" width="420"><br><sub>Landscape · 844×390, frame fully visible</sub></td>
+</tr>
 </table>
 
 ## Feature tour
@@ -337,7 +340,7 @@ skipped on feature branches to respect the protected Pages environment.
 
 Pushes to `arena/**` branches (plus manual dispatch) trigger
 `.github/workflows/screenshots.yml`: it builds the app, runs Playwright Chromium against the
-production preview at **390×844, 320×568 and 1440×900**, writes nine real-render PNGs plus
+production preview at **390×844, 320×568, 844×390 (landscape) and 1440×900**, writes ten real-render PNGs plus
 `docs/screenshots/responsive-audit.json` (horizontal-overflow, frame-fit and screen-size checks),
 and commits the refreshed captures back to the branch. The README gallery above is generated
 entirely from these genuine captures — no mockup or placeholder imagery.

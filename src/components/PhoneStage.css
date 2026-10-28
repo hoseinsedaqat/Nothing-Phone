@@ -326,8 +326,9 @@
   display: flex;
   gap: 8px;
 }
-/* The collapse toggle only exists for narrow screens. */
-.stage-controls-toggle { display: none; }
+/* The collapse toggle only exists for narrow screens. The extra class
+   selector is required to beat `.stage-controls button` on specificity. */
+.stage-controls .stage-controls-toggle { display: none; }
 
 .stage-hint {
   position: absolute;
