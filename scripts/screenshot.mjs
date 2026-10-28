@@ -111,12 +111,18 @@ for (const vp of VIEWPORTS) {
       }
       await drawer.waitFor({ state: 'visible', timeout: 8000 });
       await page.waitForTimeout(500);
-      // In-page click bypasses hit-testing against the animated drawer
-      // scrim while still bubbling to React's onClick.
+      // AppIcon opens on pointerup (with a pointerdown-armed long-press
+      // timer), not onClick — dispatch both events on its wrap element.
+      // Synthetic events bubble to React's root listeners and are immune
+      // to the animated drawer scrim's hit-testing.
       await page.evaluate(() => {
         const label = [...document.querySelectorAll('.app-icon-label')]
           .find((el) => el.textContent === 'Calculator');
-        (label?.closest('button') ?? label)?.click();
+        const wrap = label?.closest('.app-icon-wrap');
+        if (!wrap) throw new Error('Calculator icon not found in drawer');
+        const opts = { bubbles: true, cancelable: true, isPrimary: true };
+        wrap.dispatchEvent(new PointerEvent('pointerdown', opts));
+        wrap.dispatchEvent(new PointerEvent('pointerup', opts));
       });
       await page.locator('.calc-app').waitFor({ state: 'visible', timeout: 8000 });
       await page.waitForTimeout(400);
