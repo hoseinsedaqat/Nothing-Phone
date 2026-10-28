@@ -1,0 +1,28 @@
+.status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px 0 26px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 300;
+  pointer-events: none;
+  color: var(--text);
+}
+.status-bar.on-media { color: #fff; }
+.sb-time { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.sb-right { display: flex; align-items: center; gap: 6px; }
+.sb-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.sb-battery { display: flex; align-items: center; gap: 3px; }
+.sb-battery small { font-size: 11px; font-weight: 600; }
+.sb-battery.saver svg { color: #30d158; }

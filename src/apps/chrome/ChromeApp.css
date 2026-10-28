@@ -1,0 +1,127 @@
+.chrome-app {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+.chrome-top { flex: none; padding-top: 44px; background: var(--bg-elevated); border-bottom: 1px solid var(--stroke); }
+.chrome-top-row { display: flex; align-items: center; gap: 10px; padding: 6px 12px; }
+.chrome-brand { font-size: 15px; flex: 1; }
+.chrome-icon-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+.chrome-icon-btn:disabled { opacity: 0.3; }
+.chrome-icon-btn:active { background: var(--bg-hover); }
+.tab-badge {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  min-width: 15px;
+  height: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+.address-bar { display: flex; align-items: center; gap: 2px; padding: 4px 10px 10px; }
+.address-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card-2);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 9px 14px;
+  color: var(--text-3);
+}
+.address-input input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 13.5px; }
+.chrome-content { flex: 1; min-height: 0; position: relative; background: #fff; }
+.chrome-frame { width: 100%; height: 100%; border: none; background: #fff; }
+.chrome-loading { position: absolute; top: 0; left: 0; right: 0; height: 3px; overflow: hidden; }
+.chrome-progress {
+  width: 40%;
+  height: 100%;
+  background: var(--accent);
+  animation: progress 1.1s ease-in-out infinite;
+}
+@keyframes progress {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(320%); }
+}
+.new-tab { padding: 30px 20px; height: 100%; background: var(--bg); color: var(--text); }
+.ntp-logo { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 22px; }
+.ntp-logo h2 { font-size: 20px; font-weight: 600; }
+.ntp-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card-2);
+  border: 1px solid var(--stroke);
+  border-radius: 999px;
+  padding: 13px 18px;
+  color: var(--text-2);
+}
+.ntp-search input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 14px; }
+.ntp-shortcuts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 8px; margin: 26px 0; }
+.ntp-shortcut { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.ntp-shortcut span {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 17px;
+}
+.ntp-shortcut small { font-size: 11px; color: var(--text-2); }
+.blocked-panel {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  color: var(--text);
+  padding: 40px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.blocked-panel h3 { font-size: 18px; }
+.blocked-panel p { font-size: 13px; color: var(--text-2); line-height: 1.6; }
+.tab-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 8px 6px 14px;
+  gap: 6px;
+}
+.tab-row.current { border-color: var(--accent); }
+.tab-row-open {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  font-size: 13.5px;
+  min-width: 0;
+}
+.tab-row-open span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tab-row > button:last-child { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-2); }
+.engine-list { display: flex; gap: 8px; flex-wrap: wrap; }
+.chrome-app.incognito .chrome-top { background: #1e1f24; }

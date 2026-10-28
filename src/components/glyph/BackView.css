@@ -1,0 +1,154 @@
+.back-view {
+  position: absolute;
+  inset: 0;
+  z-index: 400;
+  background: #050506;
+  perspective: 1200px;
+}
+.back-shell {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 12%, rgba(255, 255, 255, 0.07), transparent 45%),
+    linear-gradient(150deg, #16161a, #08080a 60%, #111114);
+  padding: 60px 26px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+.back-close {
+  position: absolute;
+  top: 50px;
+  right: 18px;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg-card-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.camera-island {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  align-self: flex-start;
+  margin-left: 6px;
+}
+.cam-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 300ms ease;
+}
+.cam-ring.small { width: 46px; height: 46px; }
+.cam-ring.lit {
+  border-color: #fff;
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.55);
+}
+.cam-lens {
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #2c333c, #050608 75%);
+}
+.cam-flash {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.8);
+}
+
+.glyph-strip {
+  position: absolute;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.5);
+  transition: opacity 300ms ease;
+}
+.glyph-strip.top {
+  top: 150px;
+  left: 26px;
+  right: 26px;
+  height: 3px;
+}
+.glyph-strip.side {
+  top: 180px;
+  right: 30px;
+  width: 3px;
+  height: 180px;
+}
+
+.glyph-matrix {
+  margin-top: 90px;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 7px;
+  width: 260px;
+  height: 150px;
+  align-items: end;
+}
+.glyph-dot {
+  background: #fff;
+  border-radius: 2px;
+  height: 70%;
+  opacity: calc(0.25 * var(--intensity, 0.7));
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.35);
+}
+.glyph-matrix.fx-pulse .glyph-dot { animation: glyphPulse 1.6s ease-in-out infinite; }
+.glyph-matrix.fx-wave .glyph-dot { animation: glyphWave 1.8s ease-in-out infinite; }
+.glyph-matrix.fx-ripple .glyph-dot { animation: glyphRipple 2s ease-in-out infinite; }
+.glyph-matrix.fx-matrix .glyph-dot { animation: glyphMatrix 1.4s steps(2) infinite; }
+.glyph-matrix.fx-meter .glyph-dot { animation: glyphMeter 0.9s ease-in-out infinite alternate; }
+.glyph-matrix.fx-off .glyph-dot { opacity: 0.06; box-shadow: none; }
+
+@keyframes glyphPulse { 0%, 100% { opacity: calc(0.15 * var(--intensity, .7)); } 50% { opacity: var(--intensity, .7); } }
+@keyframes glyphWave {
+  0%, 100% { opacity: calc(0.12 * var(--intensity, .7)); transform: translateY(4px); }
+  50% { opacity: var(--intensity, .7); transform: translateY(-3px); }
+}
+@keyframes glyphRipple {
+  0%, 100% { opacity: calc(0.1 * var(--intensity, .7)); }
+  40% { opacity: var(--intensity, .7); }
+}
+@keyframes glyphMatrix {
+  0% { opacity: calc(0.08 * var(--intensity, .7)); }
+  50% { opacity: var(--intensity, .7); }
+  100% { opacity: calc(0.2 * var(--intensity, .7)); }
+}
+@keyframes glyphMeter {
+  from { opacity: calc(0.2 * var(--intensity, .7)); }
+  to { opacity: var(--intensity, .7); }
+}
+
+.glyph-overlay-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  text-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+}
+.back-caption { color: #6e6e73; font-size: 11.5px; letter-spacing: 0.06em; }
+.back-controls { display: flex; gap: 10px; margin-top: auto; }
+.glyph-effect-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 8px; }
+.glyph-timer-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.glyph-note {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.5;
+  padding: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+}

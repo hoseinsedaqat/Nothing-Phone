@@ -1,0 +1,117 @@
+/* ── Nothing OS design tokens ─────────────────────────────── */
+:root {
+  --accent: #d71921;
+  --accent-soft: rgba(215, 25, 33, 0.14);
+  --phone-w: 393px;
+  --phone-h: 852px;
+  --radius-app: 28px;
+  --radius-card: 20px;
+  --radius-pill: 999px;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+  --dur-fast: 160ms;
+  --dur-med: 280ms;
+  --dur-slow: 420ms;
+  --font: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Roboto Mono', Menlo, monospace;
+}
+
+:root,
+[data-theme='dark'] {
+  --bg: #000000;
+  --bg-elevated: #141414;
+  --bg-card: #1c1c1e;
+  --bg-card-2: #26262a;
+  --bg-hover: rgba(255, 255, 255, 0.07);
+  --text: #f5f5f7;
+  --text-2: #a8a8ad;
+  --text-3: #6e6e73;
+  --stroke: rgba(255, 255, 255, 0.1);
+  --stroke-strong: rgba(255, 255, 255, 0.22);
+  --scrim: rgba(0, 0, 0, 0.55);
+  --toggle-off: #3a3a3c;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+[data-theme='light'] {
+  --bg: #f4f4f6;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-2: #f0f0f2;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  --text: #101012;
+  --text-2: #55555a;
+  --text-3: #8a8a8f;
+  --stroke: rgba(0, 0, 0, 0.09);
+  --stroke-strong: rgba(0, 0, 0, 0.18);
+  --scrim: rgba(0, 0, 0, 0.35);
+  --toggle-off: #d6d6db;
+  --shadow: 0 12px 36px rgba(0, 0, 0, 0.18);
+  color-scheme: light;
+}
+
+[data-accent='red'] { --accent: #d71921; --accent-soft: rgba(215,25,33,.14); }
+[data-accent='blue'] { --accent: #2f7cf6; --accent-soft: rgba(47,124,246,.16); }
+[data-accent='green'] { --accent: #30b455; --accent-soft: rgba(48,180,85,.16); }
+[data-accent='purple'] { --accent: #8b5cf6; --accent-soft: rgba(139,92,246,.18); }
+[data-accent='orange'] { --accent: #f2711c; --accent-soft: rgba(242,113,28,.16); }
+[data-accent='mono'] { --accent: #f5f5f7; --accent-soft: rgba(245,245,247,.14); }
+[data-theme='light'][data-accent='mono'] { --accent: #101012; --accent-soft: rgba(16,16,18,.1); }
+
+/* Extra dark: deepen every surface toward pure black */
+[data-extra-dark='true'] {
+  --bg: #000000;
+  --bg-elevated: #08080a;
+  --bg-card: #0e0e10;
+  --bg-card-2: #18181b;
+  --stroke: rgba(255, 255, 255, 0.07);
+}
+
+/* ── Wallpaper presets (pure CSS/SVG, no external assets) ─── */
+.wallpaper {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: opacity var(--dur-med) var(--ease-standard);
+}
+.wp-dotgrid {
+  background-color: #070708;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1.4px);
+  background-size: 18px 18px;
+}
+.wp-glyph {
+  background-color: #0a0a0b;
+  background-image:
+    radial-gradient(circle at 78% 18%, rgba(215, 25, 33, 0.55), transparent 42%),
+    linear-gradient(135deg, transparent 0 58%, rgba(255, 255, 255, 0.06) 58% 59%, transparent 59%),
+    radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1.5px);
+  background-size: auto, auto, 22px 22px;
+}
+.wp-mono {
+  background: #000;
+}
+.wp-paper {
+  background: linear-gradient(160deg, #f7f7f9, #e9e9ee 60%, #dedee5);
+}
+.wp-sunset {
+  background: linear-gradient(165deg, #1b1020 0%, #3d1226 45%, #a02332 78%, #e2643f 100%);
+}
+.wp-wave {
+  background-color: #0c0c10;
+  background-image:
+    radial-gradient(circle at 20% 85%, rgba(47, 124, 246, 0.35), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(215, 25, 33, 0.4), transparent 40%),
+    radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1.4px);
+  background-size: auto, auto, 20px 20px;
+}
+.wp-lines {
+  background-color: #08080a;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.05) 0 2px,
+    transparent 2px 14px
+  );
+}

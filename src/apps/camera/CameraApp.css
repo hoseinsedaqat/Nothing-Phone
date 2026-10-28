@@ -1,0 +1,103 @@
+.camera-app { position: absolute; inset: 0; background: #000; display: flex; flex-direction: column; }
+.viewfinder { position: relative; flex: 1; overflow: hidden; background: #050506; }
+.viewfinder video { width: 100%; height: 100%; object-fit: cover; }
+.viewfinder video.mirror { transform: scaleX(-1); }
+.demo-viewfinder {
+  position: absolute;
+  inset: 0;
+  color: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.demo-ring {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 3px solid rgba(215, 25, 33, 0.6);
+  box-shadow: 0 0 60px rgba(215, 25, 33, 0.35);
+}
+.capture-flash { position: absolute; inset: 0; background: #fff; z-index: 4; animation: flashFade 180ms ease forwards; }
+@keyframes flashFade { from { opacity: 0.95; } to { opacity: 0; } }
+.cam-topbar {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 3;
+}
+.cam-chip {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(20, 20, 22, 0.6);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cam-warning {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11.5px;
+  background: rgba(20, 20, 22, 0.75);
+  padding: 10px 14px;
+  border-radius: 14px;
+  color: #e8e8ec;
+}
+.cam-bottom { flex: none; padding: 16px 0 52px; background: #000; }
+.cam-modes { display: flex; justify-content: center; gap: 22px; margin-bottom: 18px; }
+.cam-modes button { font-size: 13px; color: #8a8a8f; font-weight: 600; }
+.cam-modes button.active { color: #fff; position: relative; }
+.cam-modes button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 20%;
+  right: 20%;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.cam-controls { display: flex; align-items: center; justify-content: space-around; }
+.shutter {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  background: transparent;
+  position: relative;
+}
+.shutter::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 120ms ease;
+}
+.shutter:active::after { transform: scale(0.85); }
+.shutter.video::after { background: #ff3b30; border-radius: 8px; }
+.cam-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--bg-card-2);
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.cam-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.cam-chip.big { width: 48px; height: 48px; }

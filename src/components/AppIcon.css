@@ -1,0 +1,49 @@
+.app-icon-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  touch-action: none;
+  cursor: pointer;
+}
+.app-icon-tile {
+  transition: transform 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+.app-icon-wrap:active .app-icon-tile { transform: scale(0.9); }
+.app-icon-label {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7);
+  max-width: 78px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+[data-theme='light'] .app-icon-label {
+  color: #1c1c1e;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.6);
+}
+.app-icon-x {
+  position: absolute;
+  top: -7px;
+  left: calc(50% + 18px);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
+}
+.app-icon-wrap.jiggle { animation: jiggle 2.6s ease-in-out infinite; }
+@keyframes jiggle {
+  0%, 100% { transform: rotate(-0.8deg); }
+  50% { transform: rotate(0.8deg); }
+}
+.app-icon-wrap.dragging { opacity: 0.35; }

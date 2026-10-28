@@ -1,0 +1,39 @@
+.recorder-hero {
+  margin: 18px 16px;
+  padding: 28px 20px;
+  border-radius: 26px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.recorder-hero.live { border-color: var(--accent); }
+.rec-wave { display: flex; align-items: center; gap: 4px; height: 46px; }
+.rec-wave span {
+  width: 4px;
+  border-radius: 4px;
+  background: var(--accent);
+  height: 30%;
+  animation: wave 0.9s ease-in-out infinite alternate;
+}
+@keyframes wave { from { height: 20%; } to { height: 100%; } }
+.recorder-hero strong { font-size: 44px; font-weight: 200; font-variant-numeric: tabular-nums; }
+.recorder-hero small { color: var(--text-3); font-size: 12.5px; }
+.record-btn {
+  margin-top: 12px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 28px rgba(215, 25, 33, 0.35);
+}
+.record-btn.stop { border-radius: 18px; }
+.record-btn:active { transform: scale(0.94); }
+.inline-icon { color: var(--text-2); padding: 8px; }
+.inline-icon.danger { color: #ff453a; }
