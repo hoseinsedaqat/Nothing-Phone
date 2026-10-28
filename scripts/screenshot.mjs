@@ -3,10 +3,14 @@
  * Captures genuine renders of the simulator at mobile, small-phone and
  * desktop viewports, plus a machine-readable responsive audit report.
  *
+ * All gestures are computed from the live .phone-screen bounding box so
+ * they stay correct whatever the responsive scale factor is. Each capture
+ * is wrapped in try/catch: one flaky interaction must not kill the suite.
+ *
  * Usage:  BASE_URL=http://localhost:4173 node scripts/screenshot.mjs
  */
 import { chromium } from 'playwright';
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile, readdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -21,9 +25,31 @@ const VIEWPORTS = [
 ];
 
 const report = [];
-
 await mkdir(out, { recursive: true });
 const browser = await chromium.launch();
+
+/** Drag inside the phone screen using its live bounding rect. */
+async function dragInPhone(page, fromF, toF, steps = 14) {
+  const box = await page.locator('.phone-screen').boundingBox();
+  if (!box) throw new Error('phone-screen not found');
+  const fx = box.x + box.width * fromF[0];
+  const fy = box.y + box.height * fromF[1];
+  const tx = box.x + box.width * toF[0];
+  const ty = box.y + box.height * toF[1];
+  await page.mouse.move(fx, fy);
+  await page.mouse.down();
+  await page.mouse.move(tx, ty, { steps });
+  await page.mouse.up();
+}
+
+async function guarded(name, fn) {
+  try {
+    await fn();
+    report.push({ capture: name, ok: true });
+  } catch (err) {
+    report.push({ capture: name, ok: false, error: String(err?.message ?? err) });
+  }
+}
 
 for (const vp of VIEWPORTS) {
   const ctx = await browser.newContext({
@@ -57,70 +83,75 @@ for (const vp of VIEWPORTS) {
   report.push({ viewport: vp.name, kind: 'audit', ...audit });
 
   if (vp.name === 'mobile') {
-    await page.screenshot({ path: join(out, '01-lock-screen.png') });
-
-    // Unlock with a single tap (the user-reported gesture contract).
-    await page.locator('.lock-screen').click({ position: { x: 195, y: 420 } });
-    await page.waitForTimeout(700);
-    await page.screenshot({ path: join(out, '02-home-screen.png') });
-
-    // Control center: drag down from the top hot zone.
-    await page.mouse.move(195, 24);
-    await page.mouse.down();
-    await page.mouse.move(195, 220, { steps: 12 });
-    await page.mouse.up();
-    await page.waitForTimeout(700);
-    await page.screenshot({ path: join(out, '03-control-center.png') });
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(400);
-
-    // Calculator via app drawer (swipe up from bottom).
-    await page.mouse.move(195, 830);
-    await page.mouse.down();
-    await page.mouse.move(195, 420, { steps: 12 });
-    await page.mouse.up();
-    await page.waitForTimeout(600);
-    await page.getByText('Calculator', { exact: true }).first().click();
-    await page.waitForTimeout(600);
-    await page.screenshot({ path: join(out, '04-calculator.png') });
-
-    // Press some keys so the display isn't empty.
-    await page.getByRole('button', { name: '7' }).click();
-    await page.getByText('×', { exact: true }).click();
-    await page.getByRole('button', { name: '6' }).click();
-    await page.getByRole('button', { name: '=' }).click();
-    await page.waitForTimeout(300);
-    await page.screenshot({ path: join(out, '05-calculator-result.png') });
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(400);
-
-    // Rear Glyph view via the stage "Flip phone" control.
-    await page.getByRole('button', { name: 'Flip phone' }).click();
-    await page.waitForTimeout(800);
-    await page.screenshot({ path: join(out, '06-glyph-back.png') });
-    await page.getByRole('button', { name: 'Front view' }).click();
-    await page.waitForTimeout(500);
-
-    // Always-On Display: write persisted state and reload.
-    await page.evaluate(() => {
-      const raw = localStorage.getItem('np3:v1:system');
-      const sys = raw ? JSON.parse(raw) : {};
-      sys.powerState = 'aod';
-      localStorage.setItem('np3:v1:system', JSON.stringify(sys));
+    await guarded('01-lock-screen', async () => {
+      await page.screenshot({ path: join(out, '01-lock-screen.png') });
     });
-    await page.reload({ waitUntil: 'networkidle' });
-    await page.waitForTimeout(700);
-    await page.screenshot({ path: join(out, '07-always-on-display.png') });
+
+    await guarded('02-home-screen', async () => {
+      await page.locator('.lock-screen').click();
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: join(out, '02-home-screen.png') });
+    });
+
+    await guarded('03-control-center', async () => {
+      await dragInPhone(page, [0.5, 0.02], [0.5, 0.34]);
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: join(out, '03-control-center.png') });
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(400);
+    });
+
+    await guarded('04-calculator', async () => {
+      // Open the app drawer with a bottom-edge swipe.
+      await dragInPhone(page, [0.5, 0.98], [0.5, 0.45]);
+      await page.waitForTimeout(600);
+      await page.getByText('Calculator', { exact: true }).first().click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: join(out, '04-calculator.png') });
+
+      await page.getByRole('button', { name: '7' }).click();
+      await page.getByRole('button', { name: '×' }).click();
+      await page.getByRole('button', { name: '6' }).click();
+      await page.getByRole('button', { name: '=' }).click();
+      await page.waitForTimeout(300);
+      await page.screenshot({ path: join(out, '05-calculator-result.png') });
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(400);
+    });
+
+    await guarded('06-glyph-back', async () => {
+      await page.getByRole('button', { name: 'Flip phone' }).click();
+      await page.waitForTimeout(800);
+      await page.screenshot({ path: join(out, '06-glyph-back.png') });
+      await page.getByRole('button', { name: 'Front view' }).click();
+      await page.waitForTimeout(500);
+    });
+
+    await guarded('07-always-on-display', async () => {
+      await page.evaluate(() => {
+        const raw = localStorage.getItem('np3:v1:system');
+        const sys = raw ? JSON.parse(raw) : {};
+        sys.powerState = 'aod';
+        localStorage.setItem('np3:v1:system', JSON.stringify(sys));
+      });
+      await page.reload({ waitUntil: 'networkidle' });
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: join(out, '07-always-on-display.png') });
+    });
   }
 
   if (vp.name === 'small') {
-    await page.screenshot({ path: join(out, '08-small-viewport.png') });
+    await guarded('08-small-viewport', async () => {
+      await page.screenshot({ path: join(out, '08-small-viewport.png') });
+    });
   }
 
   if (vp.name === 'desktop') {
-    await page.locator('.lock-screen').click({ position: { x: 195, y: 420 } }).catch(() => {});
-    await page.waitForTimeout(700);
-    await page.screenshot({ path: join(out, '09-desktop-stage.png') });
+    await guarded('09-desktop-stage', async () => {
+      await page.locator('.lock-screen').click().catch(() => {});
+      await page.waitForTimeout(700);
+      await page.screenshot({ path: join(out, '09-desktop-stage.png') });
+    });
   }
 
   await ctx.close();
@@ -128,4 +159,10 @@ for (const vp of VIEWPORTS) {
 
 await browser.close();
 await writeFile(join(out, 'responsive-audit.json'), JSON.stringify(report, null, 2));
-console.log(`Screenshots + audit written to ${out}`);
+const failed = report.filter((r) => r.ok === false);
+const pngs = (await readdir(out)).filter((f) => f.endsWith('.png'));
+console.log(`Screenshots + audit written to ${out} (${pngs.length} images, ${failed.length} failed captures)`);
+if (failed.length) console.log(JSON.stringify(failed, null, 2));
+// A total failure (server down, selectors all broken) should fail the job;
+// individual flaky captures are recorded in the audit instead.
+if (pngs.length === 0) process.exit(1);
