@@ -5,3 +5,6 @@ dist-ssr
 .DS_Store
 coverage
 .vitest-cache
+
+# TypeScript incremental build info
+tsconfig.tsbuildinfo
