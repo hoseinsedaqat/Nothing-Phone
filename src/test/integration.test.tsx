@@ -21,7 +21,20 @@ describe('full simulator integration', () => {
 
   it('boots into the lock screen', () => {
     render(<App />);
-    expect(screen.getByText(/swipe up to unlock/i)).toBeInTheDocument();
+    expect(useOS.getState().system.powerState).toBe('locked');
+    expect(screen.getByLabelText('Flashlight')).toBeInTheDocument();
+    expect(screen.getByLabelText('Camera')).toBeInTheDocument();
+    expect(document.querySelector('.dot-clock')).toBeInTheDocument();
+  });
+
+  it('unlocks with a single tap on the lock screen', () => {
+    render(<App />);
+    const lock = document.querySelector('.lock-screen')!;
+    act(() => {
+      lock.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 100, clientY: 400 }));
+      lock.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, clientX: 100, clientY: 400 }));
+    });
+    expect(useOS.getState().system.powerState).toBe('unlocked');
   });
 
   it('unlocks and renders the home screen with the dock', () => {

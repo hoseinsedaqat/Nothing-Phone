@@ -77,6 +77,17 @@
   background-position: center;
   transition: opacity var(--dur-med) var(--ease-standard);
 }
+/* Authentic abstract grayscale fluid wallpaper, like the real device */
+.wp-nothing {
+  background-color: #0a0a0c;
+  background-image:
+    radial-gradient(ellipse 90% 55% at 78% -5%, rgba(255, 255, 255, 0.28), transparent 60%),
+    radial-gradient(ellipse 70% 45% at 8% 22%, rgba(255, 255, 255, 0.16), transparent 62%),
+    radial-gradient(ellipse 85% 60% at 88% 68%, rgba(255, 255, 255, 0.2), transparent 64%),
+    radial-gradient(ellipse 65% 45% at 18% 92%, rgba(255, 255, 255, 0.12), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 45%, rgba(215, 25, 33, 0.12), transparent 70%),
+    linear-gradient(160deg, #151519 0%, #070708 55%, #0d0d10 100%);
+}
 .wp-dotgrid {
   background-color: #070708;
   background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1px, transparent 1.4px);

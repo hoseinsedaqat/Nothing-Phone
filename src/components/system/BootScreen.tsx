@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useOS } from '../../os/store';
+import './BootScreen.css';
 
 export default function BootScreen() {
   const setPower = useOS((s) => s.setPower);

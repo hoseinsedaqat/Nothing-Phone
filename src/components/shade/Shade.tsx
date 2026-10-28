@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent as RPointerEvent } from 'react';
+import { useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Wifi,
@@ -24,19 +24,66 @@ import {
 } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
-import { Slider } from '../ui';
 import { useNow, formatTime, haptic } from '../../os/hooks';
-import { useState } from 'react';
+import { playTick } from '../../os/sound';
 import './Shade.css';
 
 interface TileDef {
   key: string;
   label: string;
   Icon: typeof Wifi;
-  on: (s: ReturnType<typeof useOS.getState>['system']) => boolean;
-  sub?: (s: ReturnType<typeof useOS.getState>['system']) => string;
+  on: boolean;
+  sub?: string;
   toggle: () => void;
   settingsRoute?: string;
+}
+
+/** Full-width pill slider — identical component for brightness and volume. */
+function PillSlider({
+  value,
+  onChange,
+  Icon,
+  label,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  Icon: typeof Sun;
+  label: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const setFromEvent = (clientX: number) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const pct = Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100));
+    onChange(Math.round(pct));
+  };
+  const onPointerDown = (e: RPointerEvent) => {
+    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
+    setFromEvent(e.clientX);
+  };
+  const onPointerMove = (e: RPointerEvent) => {
+    if (e.buttons !== 1) return;
+    setFromEvent(e.clientX);
+  };
+  return (
+    <div
+      ref={ref}
+      className="pill-slider"
+      role="slider"
+      aria-label={label}
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+    >
+      <div className="pill-slider-fill" style={{ width: `${value}%` }} />
+      <span className="pill-slider-icon" style={{ color: value > 14 ? '#111' : '#f5f5f7' }}>
+        <Icon size={16} />
+      </span>
+      <span className="pill-slider-pct">{value}%</span>
+    </div>
+  );
 }
 
 export default function Shade() {
@@ -52,88 +99,37 @@ export default function Shade() {
   const now = useNow(30_000);
   const longTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const tiles: TileDef[] = [
-    {
-      key: 'wifi',
-      label: 'Wi-Fi',
-      Icon: Wifi,
-      on: (s) => s.wifi,
-      sub: (s) => (s.wifi ? s.wifiNetwork : 'Off'),
-      toggle: () => patch({ wifi: !sys.wifi }),
-      settingsRoute: 'network',
-    },
-    {
-      key: 'bt',
-      label: 'Bluetooth',
-      Icon: Bluetooth,
-      on: (s) => s.bluetooth,
-      sub: (s) => (s.bluetooth ? 'On' : 'Off'),
-      toggle: () => patch({ bluetooth: !sys.bluetooth }),
-      settingsRoute: 'connected',
-    },
-    {
-      key: 'airplane',
-      label: 'Airplane',
-      Icon: Plane,
-      on: (s) => s.airplane,
+  const allTiles: TileDef[] = [
+    { key: 'wifi', label: 'Wi-Fi', Icon: Wifi, on: sys.wifi, sub: sys.wifi ? sys.wifiNetwork : 'Off',
+      toggle: () => patch({ wifi: !sys.wifi }), settingsRoute: 'network' },
+    { key: 'bt', label: 'Bluetooth', Icon: Bluetooth, on: sys.bluetooth, sub: sys.bluetooth ? 'On' : 'Off',
+      toggle: () => patch({ bluetooth: !sys.bluetooth }), settingsRoute: 'connected' },
+    { key: 'airplane', label: 'Airplane', Icon: Plane, on: sys.airplane,
       toggle: () => patch({ airplane: !sys.airplane, wifi: sys.airplane, bluetooth: !sys.airplane ? false : sys.bluetooth }),
-      settingsRoute: 'network',
-    },
-    {
-      key: 'flash',
-      label: 'Flashlight',
-      Icon: Flashlight,
-      on: (s) => s.flashlight,
-      toggle: () => patch({ flashlight: !sys.flashlight }),
-    },
-    {
-      key: 'dnd',
-      label: 'Do Not Disturb',
-      Icon: Moon,
-      on: (s) => s.dnd,
-      toggle: () => patch({ dnd: !sys.dnd }),
-      settingsRoute: 'sound',
-    },
-    {
-      key: 'saver',
-      label: 'Battery Saver',
-      Icon: Leaf,
-      on: (s) => s.batterySaver,
-      toggle: () => patch({ batterySaver: !sys.batterySaver }),
-      settingsRoute: 'battery',
-    },
-    {
-      key: 'rotate',
-      label: 'Auto-rotate',
-      Icon: RotateCw,
-      on: (s) => s.autoRotate,
-      toggle: () => patch({ autoRotate: !sys.autoRotate }),
-      settingsRoute: 'display',
-    },
-    {
-      key: 'hotspot',
-      label: 'Hotspot',
-      Icon: Radio,
-      on: (s) => s.hotspot,
-      sub: (s) => (s.hotspot ? 'Active' : 'Off'),
-      toggle: () => patch({ hotspot: !sys.hotspot }),
-      settingsRoute: 'network',
-    },
-    {
-      key: 'mobile',
-      label: 'Mobile data',
-      Icon: Signal,
-      on: (s) => s.mobileData && !s.airplane,
-      toggle: () => patch({ mobileData: !sys.mobileData }),
-      settingsRoute: 'network',
-    },
+      settingsRoute: 'network' },
+    { key: 'flash', label: 'Torch', Icon: Flashlight, on: sys.flashlight,
+      toggle: () => patch({ flashlight: !sys.flashlight }) },
+    { key: 'dnd', label: 'DND', Icon: Moon, on: sys.dnd,
+      toggle: () => patch({ dnd: !sys.dnd }), settingsRoute: 'sound' },
+    { key: 'saver', label: 'Saver', Icon: Leaf, on: sys.batterySaver,
+      toggle: () => patch({ batterySaver: !sys.batterySaver }), settingsRoute: 'battery' },
+    { key: 'rotate', label: 'Rotate', Icon: RotateCw, on: sys.autoRotate,
+      toggle: () => patch({ autoRotate: !sys.autoRotate }), settingsRoute: 'display' },
+    { key: 'mobile', label: 'Mobile', Icon: Signal, on: sys.mobileData && !sys.airplane,
+      toggle: () => patch({ mobileData: !sys.mobileData }), settingsRoute: 'network' },
+    { key: 'hotspot', label: 'Hotspot', Icon: Radio, on: sys.hotspot,
+      toggle: () => patch({ hotspot: !sys.hotspot }), settingsRoute: 'network' },
   ];
+  const tiles = mode === 'qs' ? allTiles : allTiles.slice(0, 8);
 
-  const longPress = (route?: string) => (e: RPointerEvent) => {
+  const longFired = useRef(false);
+  const longPress = (route?: string) => () => {
+    longFired.current = false;
     longTimer.current = setTimeout(() => {
       haptic(18);
       longTimer.current = null;
       if (route) {
+        longFired.current = true;
         setShade('closed');
         openApp('settings');
         window.dispatchEvent(new CustomEvent('os-open-settings', { detail: route }));
@@ -162,9 +158,10 @@ export default function Shade() {
             initial={{ y: '-100%' }}
             animate={{ y: 0 }}
             exit={{ y: '-100%' }}
-            transition={{ type: 'spring', damping: 32, stiffness: 300 }}
+            transition={{ type: 'spring', damping: 34, stiffness: 320 }}
             onClick={(e) => e.stopPropagation()}
           >
+            <div className="shade-grabber" />
             <div className="shade-head">
               <span className="shade-time">{formatTime(now)}</span>
               <button
@@ -179,52 +176,51 @@ export default function Shade() {
               </button>
             </div>
 
-            <div className={`qs-grid ${mode === 'qs' ? 'expanded' : ''}`}>
-              {(mode === 'qs' ? tiles : tiles.slice(0, 6)).map((t) => (
+            {/* Circular quick toggles — Nothing style */}
+            <div className="qs-circles">
+              {tiles.map((t) => (
                 <button
                   key={t.key}
-                  className={`qs-tile ${t.on(sys) ? 'on' : ''}`}
+                  className={`qs-circle ${t.on ? 'on' : ''}`}
                   onPointerDown={longPress(t.settingsRoute)}
                   onPointerUp={cancelLong}
                   onPointerLeave={cancelLong}
                   onClick={() => {
-                    haptic(10);
+                    if (longFired.current) return;
+                    haptic(9);
+                    playTick();
                     t.toggle();
                   }}
+                  aria-label={t.label}
                 >
-                  <t.Icon size={18} />
-                  <span className="qs-label">{t.label}</span>
-                  {t.sub && <small>{t.sub(sys)}</small>}
+                  <span className="qs-circle-icon">
+                    <t.Icon size={19} />
+                  </span>
+                  <span className="qs-circle-label">{t.label}</span>
+                  {t.sub && <small>{t.sub}</small>}
                 </button>
               ))}
             </div>
 
             <button className="qs-expand" onClick={() => setShade(mode === 'qs' ? 'notifications' : 'qs')}>
-              {mode === 'qs' ? <ChevronUp size={17} /> : <ChevronDown size={17} />}
-              {mode === 'qs' ? 'Collapse' : 'Expand'}
+              {mode === 'qs' ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+              {mode === 'qs' ? 'Show less' : 'Show all controls'}
             </button>
 
+            {/* Coordinated pill sliders */}
             <div className="qs-sliders">
-              <div className="qs-slider-row">
-                <Sun size={16} />
-                <Slider value={sys.brightness} onChange={(v) => patch({ brightness: v })} label="Brightness" />
-                <span className="qs-pct">{sys.brightness}%</span>
-              </div>
-              <div className="qs-slider-row">
-                <Volume2 size={16} />
-                <Slider value={sys.mediaVol} onChange={(v) => patch({ mediaVol: v })} label="Volume" />
-                <span className="qs-pct">{sys.mediaVol}%</span>
-              </div>
+              <PillSlider value={sys.brightness} onChange={(v) => patch({ brightness: v })} Icon={Sun} label="Brightness" />
+              <PillSlider value={sys.mediaVol} onChange={(v) => patch({ mediaVol: v })} Icon={Volume2} label="Volume" />
             </div>
 
-            {/* Simulated media player */}
+            {/* Media player */}
             <div className="media-card">
               <div className="media-art dot-matrix" />
               <div className="media-meta">
                 <strong>Glyph Demo — Synthwave</strong>
                 <small>Nothing Sounds · simulated</small>
                 <div className="media-controls">
-                  <button aria-label="Previous"><SkipBack size={17} /></button>
+                  <button aria-label="Previous"><SkipBack size={16} /></button>
                   <button
                     className="media-play"
                     aria-label={playing ? 'Pause' : 'Play'}
@@ -233,19 +229,20 @@ export default function Shade() {
                       if (!playing) patch({ glyphEffect: 'meter' });
                     }}
                   >
-                    {playing ? <Pause size={18} /> : <Play size={18} />}
+                    {playing ? <Pause size={17} /> : <Play size={17} />}
                   </button>
-                  <button aria-label="Next"><SkipForward size={17} /></button>
+                  <button aria-label="Next"><SkipForward size={16} /></button>
                 </div>
               </div>
             </div>
 
+            {/* Notifications */}
             <div className="shade-notifs app-scroll">
               <div className="shade-notifs-head">
                 <strong>Notifications</strong>
                 {notifications.length > 0 && (
                   <button onClick={clearAll} className="shade-clear">
-                    <Trash2 size={13} /> Clear all
+                    <Trash2 size={12} /> Clear all
                   </button>
                 )}
               </div>
@@ -259,15 +256,16 @@ export default function Shade() {
                       className="shade-notif"
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, x: -80 }}
+                      exit={{ opacity: 0, x: -70 }}
                       onClick={() => {
                         dismiss(n.id);
                         setShade('closed');
                         openApp(n.appId);
                       }}
                     >
-                      <span className="icon-tile" style={{ width: 36, height: 36, background: app.tile }}>
-                        <app.Icon size={20} />
+                      <span className="shade-notif-dot" style={{ background: app.tile === '#ffffff' ? '#D71921' : app.tile }} />
+                      <span className="icon-tile" style={{ width: 34, height: 34, background: app.tile }}>
+                        <app.Icon size={18} />
                       </span>
                       <div className="shade-notif-text">
                         <div>
@@ -284,7 +282,7 @@ export default function Shade() {
                           dismiss(n.id);
                         }}
                       >
-                        <X size={14} />
+                        <X size={13} />
                       </button>
                     </motion.div>
                   );

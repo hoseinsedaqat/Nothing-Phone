@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, Timer, Bell, Clock3, ChevronRight } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { useNow, formatTime } from '../../os/hooks';
+import { playGlyphOn, playGlyphOff } from '../../os/sound';
 import { Sheet, Slider } from '../ui';
 import type { GlyphEffect } from '../../os/types';
 import './BackView.css';
@@ -50,6 +51,29 @@ export default function BackView() {
   const active = sys.glyphEnabled && sys.glyphEffect !== 'off';
   const intensity = sys.glyphIntensity / 100;
 
+  // Sound design: LEDs "powering up/down" when the rear view opens or the
+  // Glyph / torch state changes while it is visible. The previous-state ref
+  // also makes this immune to StrictMode's double effect invocation.
+  const prevGlyph = useRef<{ view: boolean; active: boolean; torch: boolean } | null>(null);
+  useEffect(() => {
+    const prev = prevGlyph.current;
+    if (!prev) {
+      prevGlyph.current = { view: sys.showBackView, active, torch: sys.flashlight };
+      return;
+    }
+    if (sys.showBackView && !prev.view) {
+      if (active || sys.flashlight) playGlyphOn();
+    } else if (sys.showBackView && prev.view) {
+      if (active && !prev.active) playGlyphOn();
+      else if (!active && prev.active && !sys.flashlight) playGlyphOff();
+      if (sys.flashlight !== prev.torch) {
+        if (sys.flashlight) playGlyphOn();
+        else if (!active) playGlyphOff();
+      }
+    }
+    prevGlyph.current = { view: sys.showBackView, active, torch: sys.flashlight };
+  });
+
   return (
     <AnimatePresence>
       {sys.showBackView && (
@@ -65,15 +89,15 @@ export default function BackView() {
               <X size={18} />
             </button>
 
-            {/* Camera island */}
+            {/* Camera island — horizontal pill with twin lenses, like Phone (3) */}
             <div className="camera-island">
-              <div className={`cam-ring ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.25 }}>
+              <div className={`cam-ring ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.28 }}>
                 <div className="cam-lens" />
               </div>
-              <div className={`cam-ring small ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.25 }}>
+              <div className={`cam-ring ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.28 }}>
                 <div className="cam-lens" />
               </div>
-              <div className="cam-flash" style={{ opacity: sys.flashlight ? 1 : 0.2 }} />
+              <div className="cam-flash" style={{ opacity: sys.flashlight ? 1 : 0.22 }} />
             </div>
 
             {/* LED strips */}

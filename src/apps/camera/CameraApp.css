@@ -2,23 +2,86 @@
 .viewfinder { position: relative; flex: 1; overflow: hidden; background: #050506; }
 .viewfinder video { width: 100%; height: 100%; object-fit: cover; }
 .viewfinder video.mirror { transform: scaleX(-1); }
+
+/* Animated simulated viewfinder — always works without permissions */
 .demo-viewfinder {
   position: absolute;
   inset: 0;
-  color: rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+  background: #0c0e16;
+}
+.demo-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #1c2740 0%, #3a2b46 55%, #0c0e16 100%);
+}
+.demo-sun {
+  position: absolute;
+  top: 18%;
+  right: 18%;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff4e0 0%, rgba(255, 220, 180, 0.35) 45%, transparent 72%);
+  animation: sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); opacity: 0.95; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+.demo-hills {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 0;
+  height: 38%;
+  border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+}
+.hills-back { background: #171a26; height: 42%; animation: hillDrift 14s ease-in-out infinite alternate; }
+.hills-front { background: #0d0f18; height: 30%; animation: hillDrift 10s ease-in-out infinite alternate-reverse; }
+@keyframes hillDrift {
+  from { transform: translateX(-12px); }
+  to { transform: translateX(12px); }
+}
+.demo-grid {
+  position: absolute;
+  inset: 12%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+.demo-grid span { border: 1px solid rgba(255, 255, 255, 0.12); }
+.demo-badge {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+
+.capture-flash { position: absolute; inset: 0; background: #fff; z-index: 4; animation: flashFade 200ms ease forwards; }
+@keyframes flashFade { from { opacity: 0.95; } to { opacity: 0; } }
+.capture-check {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  animation: n-pop-in 220ms ease;
 }
-.demo-ring {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  border: 3px solid rgba(215, 25, 33, 0.6);
-  box-shadow: 0 0 60px rgba(215, 25, 33, 0.35);
-}
-.capture-flash { position: absolute; inset: 0; background: #fff; z-index: 4; animation: flashFade 180ms ease forwards; }
-@keyframes flashFade { from { opacity: 0.95; } to { opacity: 0; } }
 .cam-topbar {
   position: absolute;
   top: 52px;
@@ -40,21 +103,45 @@
   align-items: center;
   justify-content: center;
 }
+.cam-chip.on { background: #f5f5f7; color: #111; }
 .cam-warning {
   position: absolute;
   bottom: 16px;
   left: 16px;
   right: 16px;
   display: flex;
-  gap: 8px;
   align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   font-size: 11.5px;
-  background: rgba(20, 20, 22, 0.75);
+  background: rgba(20, 20, 22, 0.82);
+  backdrop-filter: blur(10px);
   padding: 10px 14px;
   border-radius: 14px;
   color: #e8e8ec;
 }
-.cam-bottom { flex: none; padding: 16px 0 52px; background: #000; }
+.cam-warning button {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.cam-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+.cam-bottom { flex: none; padding: 16px 0 54px; background: #000; }
 .cam-modes { display: flex; justify-content: center; gap: 22px; margin-bottom: 18px; }
 .cam-modes button { font-size: 13px; color: #8a8a8f; font-weight: 600; }
 .cam-modes button.active { color: #fff; position: relative; }

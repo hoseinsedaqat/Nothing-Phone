@@ -1,6 +1,7 @@
 import { ChevronLeft, Square } from 'lucide-react';
 import { useOS } from '../os/store';
 import { haptic } from '../os/hooks';
+import './NavBar.css';
 
 /**
  * Gesture navigation bar. The pill itself is the home target;

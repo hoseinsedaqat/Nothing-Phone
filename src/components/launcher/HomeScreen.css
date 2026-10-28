@@ -133,12 +133,12 @@
   border-color: rgba(0, 0, 0, 0.08);
 }
 .dock {
-  margin: 0 14px 8px;
-  padding: 10px 8px;
-  border-radius: 26px;
-  background: rgba(28, 28, 30, 0.55);
-  backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin: 0 14px 10px;
+  padding: 12px 10px;
+  border-radius: 30px;
+  background: rgba(18, 18, 21, 0.62);
+  backdrop-filter: blur(22px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;
   justify-content: space-around;
   flex: none;

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { getApp } from '../../os/registry';
 import { useOS } from '../../os/store';
 import { BackContext } from '../../os/back';
+import './AppWindow.css';
 
 export default function AppWindow({ appId }: { appId: string }) {
   const app = getApp(appId);

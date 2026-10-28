@@ -30,7 +30,7 @@
   justify-content: center;
 }
 .del-btn { color: var(--text-2); width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; }
-.dialer-tabs { flex: none; display: flex; border-top: 1px solid var(--stroke); padding: 8px 0 20px; }
+.dialer-tabs { flex: none; display: flex; border-top: 1px solid var(--stroke); padding: 8px 0 46px; }
 .dialer-tabs button { flex: 1; font-size: 13px; font-weight: 600; color: var(--text-3); padding: 8px; }
 .dialer-tabs button.active { color: var(--accent); }
 .sim-note { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-3); padding: 0 18px; line-height: 1.5; }

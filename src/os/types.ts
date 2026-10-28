@@ -34,6 +34,7 @@ export interface SystemState {
   dnd: boolean;
   silent: boolean;
   vibrate: boolean;
+  soundEffects: boolean;
   ringtone: string;
   batteryLevel: number;
   batterySaver: boolean;

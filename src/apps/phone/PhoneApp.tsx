@@ -4,6 +4,7 @@ import { useData } from '../../os/dataStore';
 import { useOS } from '../../os/store';
 import { loadSlice, queueSave, uid } from '../../os/storage';
 import { EmptyState } from '../../components/ui';
+import { playDialTone } from '../../os/sound';
 import './PhoneApp.css';
 
 interface CallLogEntry {
@@ -66,7 +67,7 @@ export default function PhoneApp() {
             </div>
             <div className="dialer-grid">
               {keys.map((k) => (
-                <button key={k} className="dial-key" onClick={() => setNumber((n) => n + k)}>
+                <button key={k} className="dial-key" onClick={() => { playDialTone(k); setNumber((n) => n + k); }}>
                   <strong>{k}</strong>
                   <small>{['', 'ABC', 'DEF', 'GHI', 'JKL', 'MNO', 'PQRS', 'TUV', 'WXYZ', '', '+', ''][keys.indexOf(k)]}</small>
                 </button>
