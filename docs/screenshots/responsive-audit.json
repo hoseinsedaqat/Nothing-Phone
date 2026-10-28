@@ -33,8 +33,7 @@
   },
   {
     "capture": "04-calculator",
-    "ok": false,
-    "error": "locator.waitFor: Timeout 8000ms exceeded.\nCall log:\n  - waiting for locator('.calc-app') to be visible\n"
+    "ok": true
   },
   {
     "capture": "06-glyph-back",
