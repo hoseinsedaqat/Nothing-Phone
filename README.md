@@ -9,6 +9,16 @@ black/white/red dot-matrix design language.
 
 ---
 
+## Live demo
+
+Deployed automatically to GitHub Pages on every push to the default branch:
+
+**https://hoseinsedaqat.github.io/Nothing-Phone/**
+
+The deployment pipeline lives in `.github/workflows/deploy.yml` (build → Pages
+artifact → `deploy-pages`), with the Vite base path derived automatically from
+`actions/configure-pages`, so all assets work under the `/Nothing-Phone/` subpath.
+
 ## Quick start
 
 ```bash
