@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { RotateCcw, FlipHorizontal2, Plus, Minus, Power } from 'lucide-react';
+import { RotateCcw, FlipHorizontal2, Plus, Minus, Power, SlidersHorizontal } from 'lucide-react';
 import { useOS } from '../os/store';
 import { haptic } from '../os/hooks';
 import {
@@ -46,6 +46,7 @@ export default function PhoneStage() {
   const setDrawer = useOS((s) => s.setDrawer);
   const goHome = useOS((s) => s.goHome);
   const [powerMenu, setPowerMenu] = useState(false);
+  const [controlsOpen, setControlsOpen] = useState(false);
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const notifications = useOS((s) => s.notifications);
 
@@ -310,24 +311,35 @@ export default function PhoneStage() {
         </div>
       </div>
 
-      {/* Desktop controls */}
-      <div className="stage-controls">
-        <button onClick={() => setZoom((z) => Math.max(0.7, +(z - 0.1).toFixed(2)))} aria-label="Zoom out">
-          <Minus size={16} />
-        </button>
-        <button onClick={() => setZoom(1)} aria-label="Reset zoom">
-          <RotateCcw size={15} />
-        </button>
-        <button onClick={() => setZoom((z) => Math.min(1.35, +(z + 0.1).toFixed(2)))} aria-label="Zoom in">
-          <Plus size={16} />
-        </button>
+      {/* Stage controls: full row on wide screens; collapsed behind a
+          single toggle on phones where the frame fills the viewport. */}
+      <div className={`stage-controls ${controlsOpen ? 'open' : ''}`}>
         <button
-          onClick={() => useOS.getState().patchSystem({ showBackView: !sys.showBackView })}
-          aria-label="Flip phone"
-          className={sys.showBackView ? 'active' : ''}
+          className="stage-controls-toggle"
+          aria-label="Stage controls"
+          aria-expanded={controlsOpen}
+          onClick={() => setControlsOpen((v) => !v)}
         >
-          <FlipHorizontal2 size={16} />
+          <SlidersHorizontal size={16} />
         </button>
+        <div className="stage-controls-panel" onClick={(e) => { if ((e.target as HTMLElement).closest('button')) setControlsOpen(false); }}>
+          <button onClick={() => setZoom((z) => Math.max(0.7, +(z - 0.1).toFixed(2)))} aria-label="Zoom out">
+            <Minus size={16} />
+          </button>
+          <button onClick={() => setZoom(1)} aria-label="Reset zoom">
+            <RotateCcw size={15} />
+          </button>
+          <button onClick={() => setZoom((z) => Math.min(1.35, +(z + 0.1).toFixed(2)))} aria-label="Zoom in">
+            <Plus size={16} />
+          </button>
+          <button
+            onClick={() => useOS.getState().patchSystem({ showBackView: !sys.showBackView })}
+            aria-label={sys.showBackView ? 'Front view' : 'Flip phone'}
+            className={sys.showBackView ? 'active' : ''}
+          >
+            <FlipHorizontal2 size={16} />
+          </button>
+        </div>
       </div>
       <p className="stage-hint">
         Nothing Phone (3) simulator · drag from top for notifications · swipe up for home/drawer ·

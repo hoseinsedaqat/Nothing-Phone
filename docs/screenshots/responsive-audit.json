@@ -1,0 +1,118 @@
+[
+  {
+    "viewport": "mobile",
+    "kind": "audit",
+    "innerWidth": 390,
+    "innerHeight": 844,
+    "scrollWidth": 390,
+    "clientWidth": 390,
+    "horizontalOverflow": false,
+    "frame": {
+      "left": 8,
+      "right": 382,
+      "top": 17,
+      "bottom": 827
+    },
+    "screen": {
+      "width": 355,
+      "height": 792
+    },
+    "frameFitsViewport": true
+  },
+  {
+    "capture": "01-lock-screen",
+    "ok": true
+  },
+  {
+    "capture": "02-home-screen",
+    "ok": true
+  },
+  {
+    "capture": "03-control-center",
+    "ok": true
+  },
+  {
+    "capture": "04-calculator",
+    "ok": true
+  },
+  {
+    "capture": "06-glyph-back",
+    "ok": true
+  },
+  {
+    "capture": "07-always-on-display",
+    "ok": true
+  },
+  {
+    "viewport": "small",
+    "kind": "audit",
+    "innerWidth": 320,
+    "innerHeight": 568,
+    "scrollWidth": 320,
+    "clientWidth": 320,
+    "horizontalOverflow": false,
+    "frame": {
+      "left": 33,
+      "right": 287,
+      "top": 8,
+      "bottom": 560
+    },
+    "screen": {
+      "width": 242,
+      "height": 539
+    },
+    "frameFitsViewport": true
+  },
+  {
+    "capture": "08-small-viewport",
+    "ok": true
+  },
+  {
+    "viewport": "landscape",
+    "kind": "audit",
+    "innerWidth": 844,
+    "innerHeight": 390,
+    "scrollWidth": 844,
+    "clientWidth": 844,
+    "horizontalOverflow": false,
+    "frame": {
+      "left": 336,
+      "right": 508,
+      "top": 8,
+      "bottom": 382
+    },
+    "screen": {
+      "width": 164,
+      "height": 365
+    },
+    "frameFitsViewport": true
+  },
+  {
+    "capture": "10-landscape-stage",
+    "ok": true
+  },
+  {
+    "viewport": "desktop",
+    "kind": "audit",
+    "innerWidth": 1440,
+    "innerHeight": 900,
+    "scrollWidth": 1440,
+    "clientWidth": 1440,
+    "horizontalOverflow": false,
+    "frame": {
+      "left": 524,
+      "right": 917,
+      "top": 24,
+      "bottom": 876
+    },
+    "screen": {
+      "width": 373,
+      "height": 832
+    },
+    "frameFitsViewport": true
+  },
+  {
+    "capture": "09-desktop-stage",
+    "ok": true
+  }
+]

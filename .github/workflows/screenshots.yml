@@ -1,0 +1,69 @@
+name: Screenshots
+
+# Real-render captures of the simulator for the README gallery and for
+# responsive regression checks. Runs on feature-branch pushes (artifact
+# only; no deployment) and can be dispatched manually.
+on:
+  push:
+    branches:
+      - 'arena/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: Start preview server
+        run: |
+          nohup npm run preview -- --port 4173 > /tmp/preview.log 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:4173 >/dev/null && break
+            sleep 2
+          done
+          curl -sf http://localhost:4173 >/dev/null
+
+      - name: Capture screenshots + responsive audit
+        run: node scripts/screenshot.mjs
+        env:
+          BASE_URL: http://localhost:4173
+
+      - name: Commit screenshots back to branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/screenshots
+          if git diff --cached --quiet; then
+            echo "No screenshot changes to commit."
+          else
+            git commit -m "chore(screenshots): refresh real-render captures [skip ci]"
+            git push
+          fi
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: simulator-screenshots
+          path: docs/screenshots/
+          retention-days: 14

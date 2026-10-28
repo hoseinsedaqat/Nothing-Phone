@@ -21,7 +21,11 @@
 
 /* ── Aluminum mid-frame ─────────────────────────────────────── */
 .phone-frame {
-  transform-origin: center center;
+  /* The scaler box already reserves the exact scaled W×H, so the frame must
+     scale from its top-left corner. A center origin shifts the frame
+     down-right by W(1-s)/2 on every viewport where s ≠ 1 (all phones),
+     clipping the hardware frame against the viewport. */
+  transform-origin: top left;
   position: absolute;
   left: 0;
   top: 0;
@@ -311,12 +315,20 @@
   justify-content: center;
   backdrop-filter: blur(8px);
   cursor: pointer;
+  flex: none;
 }
 .stage-controls button.active {
   background: var(--accent);
   color: #fff;
 }
 .stage-controls button:active { transform: scale(0.94); }
+.stage-controls-panel {
+  display: flex;
+  gap: 8px;
+}
+/* The collapse toggle only exists for narrow screens. The extra class
+   selector is required to beat `.stage-controls button` on specificity. */
+.stage-controls .stage-controls-toggle { display: none; }
 
 .stage-hint {
   position: absolute;
@@ -329,6 +341,41 @@
 }
 
 @media (max-width: 520px) {
-  .stage-controls { right: 10px; top: 10px; }
+  /* On phones the device frame nearly fills the viewport, so the four
+     helper buttons collapse behind a single toggle and expand as a
+     floating popover instead of permanently covering the screen. */
+  .stage-controls { right: 8px; top: 8px; }
+  .stage-controls .stage-controls-toggle {
+    display: flex;
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+  }
+  .stage-controls-panel {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 14px;
+    background: rgba(18, 18, 22, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    display: none;
+  }
+  .stage-controls.open .stage-controls-panel { display: flex; }
+  .stage-controls-panel button {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .stage-hint { display: none; }
+}
+
+/* Shorter / landscape phone screens: shrink the helper controls further
+   so they never cover the scaled device frame. */
+@media (max-height: 480px) {
+  .stage-controls { top: 6px; right: 6px; }
+  .stage-controls button { width: 30px; height: 30px; }
   .stage-hint { display: none; }
 }
