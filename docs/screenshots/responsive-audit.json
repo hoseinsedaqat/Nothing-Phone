@@ -17,8 +17,7 @@
       "width": 355,
       "height": 792
     },
-    "frameFitsViewport": true,
-    "hintFitsViewport": true
+    "frameFitsViewport": true
   },
   {
     "capture": "01-lock-screen",
@@ -62,8 +61,7 @@
       "width": 242,
       "height": 539
     },
-    "frameFitsViewport": true,
-    "hintFitsViewport": true
+    "frameFitsViewport": true
   },
   {
     "capture": "08-small-viewport",
@@ -87,8 +85,7 @@
       "width": 164,
       "height": 365
     },
-    "frameFitsViewport": true,
-    "hintFitsViewport": true
+    "frameFitsViewport": true
   },
   {
     "capture": "10-landscape-stage",
@@ -112,8 +109,7 @@
       "width": 373,
       "height": 832
     },
-    "frameFitsViewport": true,
-    "hintFitsViewport": true
+    "frameFitsViewport": true
   },
   {
     "capture": "09-desktop-stage",
@@ -137,8 +133,7 @@
       "width": 371,
       "height": 828
     },
-    "frameFitsViewport": true,
-    "hintFitsViewport": true
+    "frameFitsViewport": true
   },
   {
     "capture": "11-wide-viewport",
