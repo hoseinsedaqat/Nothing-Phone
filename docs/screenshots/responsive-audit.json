@@ -17,7 +17,8 @@
       "width": 355,
       "height": 792
     },
-    "frameFitsViewport": true
+    "frameFitsViewport": true,
+    "hintFitsViewport": true
   },
   {
     "capture": "01-lock-screen",
@@ -61,7 +62,8 @@
       "width": 242,
       "height": 539
     },
-    "frameFitsViewport": true
+    "frameFitsViewport": true,
+    "hintFitsViewport": true
   },
   {
     "capture": "08-small-viewport",
@@ -85,7 +87,8 @@
       "width": 164,
       "height": 365
     },
-    "frameFitsViewport": true
+    "frameFitsViewport": true,
+    "hintFitsViewport": true
   },
   {
     "capture": "10-landscape-stage",
@@ -109,10 +112,36 @@
       "width": 373,
       "height": 832
     },
-    "frameFitsViewport": true
+    "frameFitsViewport": true,
+    "hintFitsViewport": true
   },
   {
     "capture": "09-desktop-stage",
+    "ok": true
+  },
+  {
+    "viewport": "wide",
+    "kind": "audit",
+    "innerWidth": 1536,
+    "innerHeight": 864,
+    "scrollWidth": 1536,
+    "clientWidth": 1536,
+    "horizontalOverflow": false,
+    "frame": {
+      "left": 572,
+      "right": 964,
+      "top": 8,
+      "bottom": 856
+    },
+    "screen": {
+      "width": 371,
+      "height": 828
+    },
+    "frameFitsViewport": true,
+    "hintFitsViewport": true
+  },
+  {
+    "capture": "11-wide-viewport",
     "ok": true
   }
 ]
