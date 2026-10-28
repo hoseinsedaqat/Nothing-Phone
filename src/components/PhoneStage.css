@@ -329,6 +329,19 @@
 }
 
 @media (max-width: 520px) {
-  .stage-controls { right: 10px; top: 10px; }
+  .stage-controls { right: 8px; top: 8px; gap: 6px; }
+  .stage-controls button {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .stage-hint { display: none; }
+}
+
+/* Shorter / landscape phone screens: shrink the helper controls further
+   so they never cover the scaled device frame. */
+@media (max-height: 480px) {
+  .stage-controls { top: 6px; right: 6px; }
+  .stage-controls button { width: 30px; height: 30px; }
   .stage-hint { display: none; }
 }

@@ -8,12 +8,22 @@ html, body, #root {
   overflow: hidden;
 }
 
+/* Dynamic viewport height keeps the stage correct behind mobile browser
+   toolbars (Safari/Chrome), with a classic-vh fallback above. */
+@supports (height: 100dvh) {
+  html, body, #root {
+    height: 100dvh;
+  }
+}
+
 body {
   font-family: var(--font);
   background: #0b0b0d;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
   user-select: none;
   -webkit-user-select: none;
   overscroll-behavior: none;
