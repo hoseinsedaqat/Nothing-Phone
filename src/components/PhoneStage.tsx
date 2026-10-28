@@ -137,10 +137,12 @@ export default function PhoneStage() {
       window.dispatchEvent(new CustomEvent('os-back'));
       return;
     }
-    // Pull down shade
-    if (y < 46 && dy > 64) {
+    // Pull down shade — forgiving trigger: starts anywhere in the top
+    // ~11% of the screen, only 34px of downward travel needed, and vertical
+    // motion must dominate so horizontal pager swipes never open it.
+    if (y < 96 && dy > 34 && dy > Math.abs(dx) * 1.05) {
       haptic(12);
-      setShade(dy > 240 ? 'qs' : 'notifications');
+      setShade(dy > 150 ? 'qs' : 'notifications');
       return;
     }
     // Swipe up from bottom

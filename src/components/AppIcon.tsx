@@ -29,9 +29,11 @@ export default function AppIcon({
 }: Props) {
   const app = getApp(appId);
   const iconSize = useOS((s) => s.system.iconSize);
+  const iconStyle = useOS((s) => s.system.iconStyle);
   const openApp = useOS((s) => s.openApp);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const px = 52 + (iconSize - 3) * 5;
+  const colored = iconStyle === 'color';
 
   const handleDown = (e: RPointerEvent) => {
     if (editMode) return;
@@ -66,9 +68,16 @@ export default function AppIcon({
     >
       <div
         className="icon-tile app-icon-tile"
-        style={{ width: px, height: px, background: app.tile, boxShadow: '0 4px 14px rgba(0,0,0,.35)' }}
+        style={{
+          width: px,
+          height: px,
+          background: colored ? 'transparent' : app.tile,
+          border: colored ? 'none' : undefined,
+          borderRadius: colored ? px * 0.27 : undefined,
+          boxShadow: '0 4px 14px rgba(0,0,0,.35)',
+        }}
       >
-        <app.Icon size={px * 0.58} />
+        <app.Icon size={colored ? px : px * 0.58} />
       </div>
       {showLabel && <span className="app-icon-label">{app.name}</span>}
       {editMode && onRemove && (

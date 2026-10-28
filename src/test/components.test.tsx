@@ -6,11 +6,28 @@ import AppIcon from '../components/AppIcon';
 import Shade from '../components/shade/Shade';
 import DotClock from '../components/DotClock';
 import { useOS } from '../os/store';
+import { APP_REGISTRY } from '../os/registry';
 
 describe('components', () => {
   it('renders an app icon with its label', () => {
     render(<AppIcon appId="chrome" />);
     expect(screen.getByText('Chrome')).toBeInTheDocument();
+  });
+
+  it('ships an authentic color brand icon for every app', () => {
+    useOS.getState().patchSystem({ iconStyle: 'color' });
+    for (const app of APP_REGISTRY) {
+      const { container, unmount } = render(<app.Icon size={40} />);
+      expect(container.querySelector('svg')).toBeTruthy();
+      unmount();
+    }
+  });
+
+  it('renders monochrome glyphs when the mono icon style is selected', () => {
+    useOS.getState().patchSystem({ iconStyle: 'mono' });
+    const { container } = render(<AppIcon appId="phone" />);
+    expect(container.querySelector('.app-icon-tile')).toHaveStyle({ background: '#3a3f45' });
+    useOS.getState().patchSystem({ iconStyle: 'color' });
   });
 
   it('calculator performs a real addition', async () => {

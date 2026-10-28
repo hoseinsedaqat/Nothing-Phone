@@ -21,7 +21,7 @@ const defaultSystem: SystemState = {
   wallpaper: 'nothing',
   customWallpaper: null,
   accent: 'red',
-  iconStyle: 'mono',
+  iconStyle: 'color',
   iconSize: 3,
   autoRotate: true,
   wifi: true,

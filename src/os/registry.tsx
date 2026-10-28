@@ -29,7 +29,6 @@ export interface AppDefinition {
   removable: boolean;
   limitation?: string;
 }
-
 const components: Record<string, FC> = {
   phone: PhoneApp,
   messages: MessagesApp,
@@ -57,8 +56,9 @@ export const APP_REGISTRY: AppDefinition[] = Object.entries(APP_META).map(([id, 
   removable: !['settings', 'phone', 'messages', 'chrome'].includes(id),
   Icon: ({ size = 24, monochrome }: AppIconProps) => {
     const iconStyle = useOS((s) => s.system.iconStyle);
-    const useColor = !monochrome && iconStyle === 'color' && meta.Color;
-    if (useColor && meta.Color) return <meta.Color size={size} />;
+    if (!monochrome && iconStyle === 'color') {
+      return <meta.Color size={size} />;
+    }
     const Mono = meta.Mono as LucideIcon;
     return <Mono size={size * 0.62} strokeWidth={1.8} color="#f5f5f7" />;
   },

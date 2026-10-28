@@ -9,6 +9,7 @@ export default function App() {
   const fontScale = useOS((s) => s.system.fontScale);
   const displaySize = useOS((s) => s.system.displaySize);
   const extraDark = useOS((s) => s.system.extraDark);
+  const iconStyle = useOS((s) => s.system.iconStyle);
   const pushNotification = useOS((s) => s.pushNotification);
 
   // Theme / typography applied at phone-frame level
@@ -17,11 +18,12 @@ export default function App() {
     if (!frame) return;
     frame.dataset.theme = darkMode ? 'dark' : 'light';
     frame.dataset.accent = accent;
+    frame.dataset.icons = iconStyle;
     frame.dataset.extraDark = String(useOS.getState().system.extraDark && darkMode);
     frame.style.fontSize =
       fontScale === 'small' ? '14.5px' : fontScale === 'large' ? '17.5px' : '16px';
     frame.style.zoom = String(displaySize);
-  }, [darkMode, accent, fontScale, displaySize, extraDark]);
+  }, [darkMode, accent, fontScale, displaySize, extraDark, iconStyle]);
 
   // First-run seed: a single welcome notification only. No ambient spam.
   useEffect(() => {
