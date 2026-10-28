@@ -71,6 +71,34 @@ describe('full simulator integration', () => {
     }
   });
 
+  it('pulls the shade down from inside an open app, even after a pointercancel', () => {
+    render(<App />);
+    act(() => useOS.getState().setPower('unlocked'));
+    act(() => useOS.getState().openApp('playstore'));
+    const screenEl = document.querySelector('.phone-screen')!;
+    // jsdom reports zero-size rects; emulate the real 393x852 viewport.
+    screenEl.getBoundingClientRect = () =>
+      ({ left: 0, top: 0, width: 393, height: 852, right: 393, bottom: 852, x: 0, y: 0, toJSON: () => ({}) }) as DOMRect;
+    // A drag starting in the top hot zone, interrupted by a browser scroll
+    // takeover (pointercancel) must still open the shade.
+    act(() => {
+      screenEl.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, clientX: 150, clientY: 18 }));
+      screenEl.dispatchEvent(new PointerEvent('pointercancel', { bubbles: true, clientX: 150, clientY: 90 }));
+    });
+    expect(useOS.getState().shadeMode).not.toBe('closed');
+    act(() => useOS.getState().setShade('closed'));
+  });
+
+  it('renders touch-capture hot zones above app windows but below the lock screen', () => {
+    render(<App />);
+    const zones = document.querySelectorAll('.gesture-hotzone');
+    expect(zones.length).toBe(2);
+    for (const z of zones) {
+      // touch-action is inlined so the browser can never hijack the gesture
+      expect((z as HTMLElement).style.touchAction).toBe('none');
+    }
+  });
+
   it('toggles quick settings and reflects state in the system store', () => {
     render(<App />);
     act(() => useOS.getState().setPower('unlocked'));

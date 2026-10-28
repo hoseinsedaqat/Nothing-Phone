@@ -75,6 +75,30 @@
 .gesture-edge.left { left: 0; }
 .gesture-edge.right { right: 0; }
 
+/*
+ * Top/bottom gesture capture strips. touch-action:none guarantees the
+ * browser never converts a drag that starts here into an app-content
+ * scroll, so the shade / home gesture survives inside scrollable apps.
+ * Sits above app windows (100) but below the lock screen (200), drawer
+ * (260), status bar (300) and shade (320).
+ */
+.gesture-hotzone {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 190;
+  touch-action: none;
+  background: transparent;
+}
+.gesture-hotzone.top {
+  top: 0;
+  height: 44px;
+}
+.gesture-hotzone.bottom {
+  bottom: 0;
+  height: 22px;
+}
+
 .punch-hole {
   position: absolute;
   top: 10px;
