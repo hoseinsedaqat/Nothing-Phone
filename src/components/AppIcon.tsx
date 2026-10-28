@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { getApp } from '../os/registry';
 import { useOS } from '../os/store';
 import { haptic } from '../os/hooks';
+import './AppIcon.css';
 
 interface Props {
   appId: string;

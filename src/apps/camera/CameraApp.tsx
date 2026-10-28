@@ -3,6 +3,7 @@ import { RefreshCw, Zap, ZapOff, Image as ImageIcon, ShieldAlert, Camera as CamI
 import { useData } from '../../os/dataStore';
 import { useOS } from '../../os/store';
 import { uid } from '../../os/storage';
+import { playShutter } from '../../os/sound';
 import './CameraApp.css';
 
 type Mode = 'Photo' | 'Portrait' | 'Video';
@@ -54,6 +55,7 @@ export default function CameraApp() {
       showToast('Video recording is not available in this web simulation');
       return;
     }
+    playShutter();
     setFlashFx(flash || permission !== 'granted');
     setTimeout(() => setFlashFx(false), 200);
     const canvas = canvasRef.current;

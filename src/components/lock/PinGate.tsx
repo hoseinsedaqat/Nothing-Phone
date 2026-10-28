@@ -4,6 +4,7 @@ import { Delete, Lock } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
 import { haptic } from '../../os/hooks';
+import { playTick } from '../../os/sound';
 
 /** PIN challenge for apps protected by the demo app-lock setting. */
 export default function PinGate() {
@@ -18,6 +19,7 @@ export default function PinGate() {
 
   const press = (d: string) => {
     haptic(8);
+    playTick();
     if (d === 'del') {
       setEntered((p) => p.slice(0, -1));
       return;

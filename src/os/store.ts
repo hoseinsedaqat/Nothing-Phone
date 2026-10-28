@@ -41,6 +41,7 @@ const defaultSystem: SystemState = {
   dnd: false,
   silent: false,
   vibrate: true,
+  soundEffects: true,
   ringtone: 'Nothing Chime',
   batteryLevel: 84,
   batterySaver: false,

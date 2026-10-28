@@ -25,6 +25,7 @@ import {
 import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
 import { useNow, formatTime, haptic } from '../../os/hooks';
+import { playTick } from '../../os/sound';
 import './Shade.css';
 
 interface TileDef {
@@ -187,6 +188,7 @@ export default function Shade() {
                   onClick={() => {
                     if (longFired.current) return;
                     haptic(9);
+                    playTick();
                     t.toggle();
                   }}
                   aria-label={t.label}

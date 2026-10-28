@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useOS } from '../../os/store';
+import './Toast.css';
 
 export default function Toast() {
   const toast = useOS((s) => s.toast);

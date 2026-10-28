@@ -5,6 +5,7 @@ import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
 import { useData } from '../../os/dataStore';
 import { useNow, formatTime, haptic } from '../../os/hooks';
+import { playTick, playGlyphOn, playGlyphOff } from '../../os/sound';
 import DotClock from '../DotClock';
 import './LockScreen.css';
 
@@ -41,6 +42,7 @@ export default function LockScreen() {
 
   const pressDigit = (d: string) => {
     haptic(7);
+    playTick();
     if (d === 'del') {
       setEntered((p) => p.slice(0, -1));
       return;
@@ -157,6 +159,8 @@ export default function LockScreen() {
           onClick={() => {
             haptic(14);
             patchSystem({ flashlight: !sys.flashlight });
+            if (!sys.flashlight) playGlyphOn();
+            else playGlyphOff();
           }}
           aria-label="Flashlight"
         >

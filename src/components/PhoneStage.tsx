@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { RotateCcw, FlipHorizontal2, Plus, Minus, Power } from 'lucide-react';
 import { useOS } from '../os/store';
 import { haptic } from '../os/hooks';
+import { primeAudio, playUnlock, playLock, playNotification, playTick } from '../os/sound';
 import LockScreen from './lock/LockScreen';
 import HomeScreen from './launcher/HomeScreen';
 import AppWindow from './system/AppWindow';
@@ -36,6 +37,32 @@ export default function PhoneStage() {
   const goHome = useOS((s) => s.goHome);
   const [powerMenu, setPowerMenu] = useState(false);
   const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const notifications = useOS((s) => s.notifications);
+
+  // Unlock the Web Audio graph on the first gesture (autoplay policy).
+  useEffect(() => {
+    const prime = () => primeAudio();
+    window.addEventListener('pointerdown', prime, { once: true });
+    return () => window.removeEventListener('pointerdown', prime);
+  }, []);
+
+  // Lock / unlock sound effects on real power-state transitions.
+  const prevPower = useRef(powerState);
+  useEffect(() => {
+    const prev = prevPower.current;
+    if (prev !== powerState) {
+      if (powerState === 'unlocked') playUnlock();
+      else if (powerState === 'locked' && prev === 'unlocked') playLock();
+      prevPower.current = powerState;
+    }
+  }, [powerState]);
+
+  // Chime whenever a new notification arrives (DND/silent handled inside).
+  const prevNotifCount = useRef(notifications.length);
+  useEffect(() => {
+    if (notifications.length > prevNotifCount.current) playNotification();
+    prevNotifCount.current = notifications.length;
+  }, [notifications]);
 
   // Responsive fit
   useEffect(() => {
@@ -250,4 +277,5 @@ function volumeKey(dir: 'up' | 'down') {
   const next = Math.min(100, Math.max(0, s.system.mediaVol + (dir === 'up' ? 8 : -8)));
   s.patchSystem({ mediaVol: next });
   s.showToast(`Media volume ${next}%`);
+  playTick();
 }

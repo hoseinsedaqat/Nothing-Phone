@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   Wifi, Bluetooth, Plane, Radio, Signal, Monitor, Moon, Sun, Palette, Type,
   Expand, Timer, Bell, Volume2, Vibrate, BatteryFull, Leaf, HardDrive, Shield,
-  Lock, Sparkles, Info, Check, Trash2, Plus, RefreshCw, Download, Upload,
+  Lock, Sparkles, Info, Check, Trash2, Plus, RefreshCw, Download, Upload, Music2,
 } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { useData } from '../../os/dataStore';
@@ -11,6 +11,7 @@ import { Row, Switch, Slider, Segmented, EmptyState, ConfirmDialog, Sheet } from
 import SectionShell, { type SectionProps } from './SectionShell';
 import { exportAllData, importAllData, resetAllSlices, resetSlice, uid } from '../../os/storage';
 import { WALLPAPERS, ACCENTS, RINGTONES, TIMEOUTS } from './settingsOptions';
+import { playRingtonePreview } from '../../os/sound';
 import './SettingsApp.css';
 
 const P = ({ children }: { children: React.ReactNode }) => <p className="n-section-title">{children}</p>;
@@ -374,24 +375,7 @@ export function NotificationsSection({ onBack }: SectionProps) {
 export function SoundSection({ onBack }: SectionProps) {
   const sys = useOS((s) => s.system);
   const patch = useOS((s) => s.patchSystem);
-  const beep = () => {
-    try {
-      const ctx = new AudioContext();
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.frequency.value = 880;
-      g.gain.value = sys.mediaVol / 400;
-      o.start();
-      setTimeout(() => {
-        o.stop();
-        ctx.close();
-      }, 350);
-    } catch {
-      /* audio unavailable */
-    }
-  };
+  const beep = () => playRingtonePreview();
   return (
     <SectionShell title="Sound & vibration" onBack={onBack}>
       <P>Media · {sys.mediaVol}%</P>
@@ -402,6 +386,11 @@ export function SoundSection({ onBack }: SectionProps) {
       <div style={{ padding: '4px 18px 12px' }}><Slider value={sys.notifVol} onChange={(v) => patch({ notifVol: v })} /></div>
       <div className="n-list-group" style={{ margin: 12 }}>
         <Row icon={<Volume2 size={16} />} label="Silent mode" right={<Switch on={sys.silent} onChange={(v) => patch({ silent: v })} />} />
+        <Row
+          icon={<Music2 size={16} />}
+          label="Sound effects"
+          right={<Switch on={sys.soundEffects} onChange={(v) => patch({ soundEffects: v })} />}
+        />
         <Row icon={<Vibrate size={16} />} label="Vibration" right={<Switch on={sys.vibrate} onChange={(v) => patch({ vibrate: v })} />} />
         <Row icon={<Moon size={16} />} label="Do Not Disturb" right={<Switch on={sys.dnd} onChange={(v) => patch({ dnd: v })} />} />
       </div>
