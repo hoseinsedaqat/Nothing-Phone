@@ -185,7 +185,7 @@ export default function PhoneStage() {
           data-theme={dark ? 'dark' : 'light'}
           data-accent={sys.accent}
         >
-          {/* Physical side buttons */}
+          {/* Physical side buttons — Phone (3): volume rocker + power on the right */}
           <div className="side-btn side-volume-up" onClick={() => volumeKey('up')} />
           <div className="side-btn side-volume-down" onClick={() => volumeKey('down')} />
           <div
@@ -193,7 +193,30 @@ export default function PhoneStage() {
             onPointerDown={pressPower}
             onPointerUp={releasePower}
             onPointerLeave={releasePower}
-          />
+          >
+            <span className="power-accent" />
+          </div>
+
+          {/* Left edge hardware */}
+          <div className="sim-tray" />
+          <span className="antenna antenna-l-top" />
+          <span className="antenna antenna-l-bottom" />
+          <span className="antenna antenna-r-top" />
+          <span className="antenna antenna-r-bottom" />
+
+          {/* Top edge: IR blaster + microphone pinhole */}
+          <span className="edge-ir" />
+          <span className="edge-mic edge-mic-top" />
+
+          {/* Bottom edge: speaker grilles, USB-C, microphone */}
+          <span className="speaker-holes speaker-left" aria-hidden>
+            {Array.from({ length: 5 }).map((_, i) => <i key={i} />)}
+          </span>
+          <span className="usb-c" />
+          <span className="speaker-holes speaker-right" aria-hidden>
+            {Array.from({ length: 5 }).map((_, i) => <i key={i} />)}
+          </span>
+          <span className="edge-mic edge-mic-bottom" />
 
           <div
             className="phone-screen"
@@ -206,6 +229,8 @@ export default function PhoneStage() {
             {/* edge-back gesture zones */}
             <div className="gesture-edge left" />
             <div className="gesture-edge right" />
+            {/* curved-glass reflection, purely decorative */}
+            <div className="glass-sheen" aria-hidden />
 
             {sys.customWallpaper ? (
               <div className="wallpaper" style={{ backgroundImage: `url(${sys.customWallpaper})` }} />

@@ -6,7 +6,7 @@ import AppIcon from '../components/AppIcon';
 import Shade from '../components/shade/Shade';
 import DotClock from '../components/DotClock';
 import { useOS } from '../os/store';
-import { APP_REGISTRY } from '../os/registry';
+import { APP_REGISTRY, getApp } from '../os/registry';
 
 describe('components', () => {
   it('renders an app icon with its label', () => {
@@ -27,6 +27,15 @@ describe('components', () => {
     useOS.getState().patchSystem({ iconStyle: 'mono' });
     const { container } = render(<AppIcon appId="phone" />);
     expect(container.querySelector('.app-icon-tile')).toHaveStyle({ background: '#3a3f45' });
+    useOS.getState().patchSystem({ iconStyle: 'color' });
+  });
+
+  it('uses a dark glyph on white tiles in mono mode (Play Store invisibility bug)', () => {
+    useOS.getState().patchSystem({ iconStyle: 'mono' });
+    const play = getApp('playstore');
+    const { container } = render(<play.Icon size={40} monochrome />);
+    const svg = container.querySelector('svg')!;
+    expect(svg.getAttribute('stroke')).toBe('#1c1c1e');
     useOS.getState().patchSystem({ iconStyle: 'color' });
   });
 

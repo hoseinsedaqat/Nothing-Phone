@@ -136,8 +136,23 @@ interface OSStore {
   focusFloating: (id: string) => void;
 }
 
+/**
+ * One-time migration: the authentic multicolor brand icon set is new;
+ * existing devices stored the old monochrome default, so upgrade them once.
+ * Users who explicitly switch back to Monochrome afterwards keep that choice.
+ */
+function migrateSystem(): SystemState {
+  const loaded = loadSlice<SystemState>('system', defaultSystem);
+  const FLAG = 'np3:icons:color-migrated';
+  if (!localStorage.getItem(FLAG)) {
+    localStorage.setItem(FLAG, '1');
+    return { ...loaded, iconStyle: 'color' };
+  }
+  return loaded;
+}
+
 export const useOS = create<OSStore>((set, get) => ({
-  system: loadSlice('system', defaultSystem),
+  system: migrateSystem(),
   launcher: loadSlice('launcher', defaultLauncher),
   notifications: loadSlice<AppNotification[]>('notifications', []),
   notifEnabled: loadSlice<Record<string, boolean>>('notifEnabled', {}),

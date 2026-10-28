@@ -140,6 +140,14 @@ export default function BackView() {
 
             <p className="back-caption">Glyph Matrix · simulated LED display</p>
 
+            <div className="back-brand" aria-label="Nothing">
+              <span className="back-dot-logo">
+                {[0, 1, 2, 3, 4].map((d) => <i key={d} className={d <= 1 ? 'lit' : ''} />)}
+              </span>
+              <strong>Nothing</strong>
+              <small>PHONE (3)</small>
+            </div>
+
             <div className="back-controls">
               <button className="n-btn" onClick={() => setSheet(true)}>
                 Glyph settings <ChevronRight size={15} />

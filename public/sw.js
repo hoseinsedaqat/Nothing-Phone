@@ -1,12 +1,13 @@
 // Minimal offline-first service worker for the simulator shell.
 // Paths are derived from the registration scope so the app works both at a
 // domain root and under a GitHub Pages project path (e.g. /Nothing-Phone/).
-const CACHE = 'np3-sim-v2';
+const CACHE = 'np3-sim-v3';
 const SCOPE = self.registration ? self.registration.scope : '/';
 const CORE = [
   SCOPE,
   new URL('index.html', SCOPE).href,
   new URL('manifest.webmanifest', SCOPE).href,
+  new URL('favicon.svg', SCOPE).href,
 ];
 const INDEX = new URL('index.html', SCOPE).href;
 
