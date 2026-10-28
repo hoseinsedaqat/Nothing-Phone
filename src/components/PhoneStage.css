@@ -21,7 +21,11 @@
 
 /* ── Aluminum mid-frame ─────────────────────────────────────── */
 .phone-frame {
-  transform-origin: center center;
+  /* The scaler box already reserves the exact scaled W×H, so the frame must
+     scale from its top-left corner. A center origin shifts the frame
+     down-right by W(1-s)/2 on every viewport where s ≠ 1 (all phones),
+     clipping the hardware frame against the viewport. */
+  transform-origin: top left;
   position: absolute;
   left: 0;
   top: 0;

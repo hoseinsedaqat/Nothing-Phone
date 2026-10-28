@@ -102,11 +102,24 @@ for (const vp of VIEWPORTS) {
     });
 
     await guarded('04-calculator', async () => {
-      // Open the app drawer with a bottom-edge swipe.
+      // Open the app drawer with a bottom-edge swipe; retry once if the
+      // gesture threshold was missed.
       await dragInPhone(page, [0.5, 0.98], [0.5, 0.45]);
-      await page.waitForTimeout(600);
-      await page.getByText('Calculator', { exact: true }).first().click();
-      await page.waitForTimeout(600);
+      const drawer = page.locator('.drawer-grid');
+      if (!(await drawer.isVisible().catch(() => false))) {
+        await dragInPhone(page, [0.5, 0.98], [0.5, 0.4]);
+      }
+      await drawer.waitFor({ state: 'visible', timeout: 8000 });
+      await page.waitForTimeout(500);
+      // In-page click bypasses hit-testing against the animated drawer
+      // scrim while still bubbling to React's onClick.
+      await page.evaluate(() => {
+        const label = [...document.querySelectorAll('.app-icon-label')]
+          .find((el) => el.textContent === 'Calculator');
+        (label?.closest('button') ?? label)?.click();
+      });
+      await page.locator('.calc-app').waitFor({ state: 'visible', timeout: 8000 });
+      await page.waitForTimeout(400);
       await page.screenshot({ path: join(out, '04-calculator.png') });
 
       await page.getByRole('button', { name: '7' }).click();
