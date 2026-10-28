@@ -1,0 +1,21 @@
+.dot-clock {
+  display: flex;
+  align-items: center;
+}
+.dot-digit {
+  display: grid;
+  grid-template-rows: repeat(5, 1fr);
+}
+.dot-cell {
+  border-radius: 50%;
+  transition: opacity 200ms ease;
+}
+.dot-colon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+.dot-colon span {
+  border-radius: 50%;
+}

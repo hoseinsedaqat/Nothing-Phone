@@ -18,7 +18,7 @@ const defaultSystem: SystemState = {
   fontScale: 'default',
   displaySize: 1,
   screenTimeout: 30,
-  wallpaper: 'dotgrid',
+  wallpaper: 'nothing',
   customWallpaper: null,
   accent: 'red',
   iconStyle: 'mono',

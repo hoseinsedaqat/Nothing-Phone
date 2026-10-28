@@ -4,83 +4,102 @@
   z-index: 200;
   display: flex;
   flex-direction: column;
-  padding: 64px 22px 30px;
+  padding: 56px 22px 26px;
   color: #fff;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.42));
+  cursor: pointer;
 }
-.lock-top { text-align: center; flex: none; }
-.lock-icon { opacity: 0.75; margin-bottom: 14px; }
-.lock-clock {
-  font-size: 76px;
-  font-weight: 300;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-}
-.lock-date { margin-top: 8px; font-size: 15px; font-weight: 500; opacity: 0.92; }
-.lock-battery {
-  margin-top: 10px;
-  font-size: 12px;
-  opacity: 0.8;
+.lock-status {
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 7px;
+  opacity: 0.7;
+  margin-bottom: 26px;
 }
-.lock-battery-pill {
-  width: 42px;
-  height: 16px;
-  border-radius: 5px;
-  border: 1.5px solid rgba(255, 255, 255, 0.7);
-  padding: 2px;
-  display: inline-flex;
-}
-.lock-battery-pill span {
-  background: #fff;
-  border-radius: 2px;
-  display: block;
-  height: 100%;
-}
-.lock-notifs {
-  flex: 1;
-  margin: 26px -6px 0;
-  padding: 0 6px;
+.lock-clock-block {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
-  min-height: 0;
+  text-align: center;
 }
-.lock-empty { text-align: center; opacity: 0.55; font-size: 13px; margin-top: 30px; }
+.lock-date {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  opacity: 0.92;
+}
+.lock-weather {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  opacity: 0.75;
+}
+
+/* Compact, tidy notification stack — never takes over the center */
+.lock-notifs {
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 210px;
+  overflow: hidden;
+}
 .lock-notif {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  gap: 11px;
+  padding: 10px 12px;
   border-radius: 18px;
-  background: rgba(28, 28, 30, 0.72);
-  backdrop-filter: blur(14px);
+  background: rgba(24, 24, 27, 0.66);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.08);
   text-align: left;
+  width: 100%;
 }
-.lock-notif strong { font-size: 13.5px; display: block; }
-.lock-notif p {
-  font-size: 12.5px;
-  opacity: 0.78;
+.lock-notif-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lock-notif-text strong { font-size: 13px; font-weight: 700; }
+.lock-notif-text small {
+  font-size: 11.5px;
+  opacity: 0.72;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 220px;
 }
-.lock-notif-x { margin-left: auto; color: #aaa; padding: 6px; }
-.lock-bottom { flex: none; margin-top: 14px; touch-action: none; }
-.lock-shortcuts { display: flex; justify-content: space-between; padding: 0 6px; }
+.lock-notif-x {
+  color: rgba(255, 255, 255, 0.55);
+  padding: 5px;
+  flex: none;
+}
+.lock-notif-more {
+  text-align: center;
+  font-size: 11.5px;
+  opacity: 0.6;
+  padding-top: 2px;
+}
+
+.lock-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  cursor: default;
+}
 .lock-circle {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  background: rgba(28, 28, 30, 0.72);
-  backdrop-filter: blur(12px);
+  background: rgba(24, 24, 27, 0.66);
+  backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
@@ -88,14 +107,13 @@
   color: #fff;
 }
 .lock-circle.on { background: #fff; color: #111; }
-.swipe-hint {
+.lock-hint {
+  width: 44px;
+  height: 44px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  margin-top: 18px;
-  font-size: 12px;
-  opacity: 0.8;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 /* PIN pad */
@@ -104,12 +122,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(14, 14, 16, 0.97);
+  background: rgba(12, 12, 14, 0.98);
   backdrop-filter: blur(24px);
   border-radius: 30px 30px 0 0;
-  padding: 26px 38px 34px;
+  padding: 24px 38px 52px;
   z-index: 5;
-  padding-bottom: 52px;
 }
 .pin-pad.shake { animation: pinShake 0.4s ease; }
 @keyframes pinShake {
@@ -117,8 +134,8 @@
   20%, 60% { transform: translateX(-10px); }
   40%, 80% { transform: translateX(10px); }
 }
-.pin-title { text-align: center; font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-.pin-dots { display: flex; justify-content: center; gap: 16px; margin-bottom: 26px; }
+.pin-title { text-align: center; font-size: 15px; font-weight: 700; margin-bottom: 14px; }
+.pin-dots { display: flex; justify-content: center; gap: 16px; margin-bottom: 24px; }
 .pin-dots span {
   width: 14px;
   height: 14px;
@@ -133,11 +150,11 @@
   justify-items: center;
 }
 .pin-keys button {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.12);
-  font-size: 27px;
+  font-size: 26px;
   font-weight: 500;
   color: #fff;
   display: flex;
@@ -146,33 +163,4 @@
 }
 .pin-keys button:active { background: rgba(255, 255, 255, 0.28); }
 .pin-keys button:disabled { background: transparent; }
-.pin-cancel { display: block; margin: 18px auto 0; font-size: 14px; color: #9a9aa0; }
-
-/* In-app PIN gate */
-.pin-gate {
-  position: absolute;
-  inset: 0;
-  z-index: 480;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(18px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-.pin-gate-card {
-  width: 100%;
-  background: var(--bg-elevated);
-  border: 1px solid var(--stroke);
-  border-radius: 28px;
-  padding: 26px 24px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.pin-gate-card.shake { animation: pinShake 0.4s ease; }
-.pin-gate-card p { font-size: 14px; font-weight: 600; }
-.static-dots { position: static; margin: 6px 0 16px; }
-.gate-keys { position: static; gap: 12px 18px; }
-.gate-keys button { width: 62px; height: 62px; font-size: 23px; }
+.pin-cancel { display: block; margin: 16px auto 0; font-size: 14px; color: #9a9aa0; }

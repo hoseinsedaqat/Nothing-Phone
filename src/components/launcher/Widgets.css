@@ -6,8 +6,14 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  backdrop-filter: blur(8px);
-  background: color-mix(in srgb, var(--bg-card) 78%, transparent);
+  backdrop-filter: blur(18px);
+  background: rgba(22, 22, 26, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+}
+[data-theme='light'] .widget {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(0, 0, 0, 0.06);
 }
 .widget-wide { width: 356px; min-height: 96px; }
 .widget-glyph { color: var(--accent); }

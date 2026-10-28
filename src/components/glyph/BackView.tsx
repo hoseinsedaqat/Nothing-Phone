@@ -65,15 +65,15 @@ export default function BackView() {
               <X size={18} />
             </button>
 
-            {/* Camera island */}
+            {/* Camera island — horizontal pill with twin lenses, like Phone (3) */}
             <div className="camera-island">
-              <div className={`cam-ring ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.25 }}>
+              <div className={`cam-ring ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.28 }}>
                 <div className="cam-lens" />
               </div>
-              <div className={`cam-ring small ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.25 }}>
+              <div className={`cam-ring ${active ? 'lit' : ''}`} style={{ opacity: active ? 0.4 + intensity * 0.6 : 0.28 }}>
                 <div className="cam-lens" />
               </div>
-              <div className="cam-flash" style={{ opacity: sys.flashlight ? 1 : 0.2 }} />
+              <div className="cam-flash" style={{ opacity: sys.flashlight ? 1 : 0.22 }} />
             </div>
 
             {/* LED strips */}

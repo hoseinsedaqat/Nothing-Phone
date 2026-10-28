@@ -1,4 +1,5 @@
 export const WALLPAPERS = [
+  { id: 'nothing', name: 'Abstract (default)' },
   { id: 'dotgrid', name: 'Dot Matrix' },
   { id: 'glyph', name: 'Glyph Glow' },
   { id: 'mono', name: 'Pure Black' },

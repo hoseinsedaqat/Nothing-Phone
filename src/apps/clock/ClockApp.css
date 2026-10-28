@@ -4,7 +4,7 @@
   flex: none;
   display: flex;
   border-top: 1px solid var(--stroke);
-  padding: 6px 4px 18px;
+  padding: 6px 4px 46px;
   background: var(--bg-elevated);
 }
 .clock-tabs button {

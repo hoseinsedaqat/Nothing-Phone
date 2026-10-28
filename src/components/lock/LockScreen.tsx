@@ -1,10 +1,15 @@
-import { useState, type PointerEvent as RPointerEvent } from 'react';
+import { useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Flashlight, Camera, Lock, ChevronUp, Delete, X } from 'lucide-react';
+import { Flashlight, Camera, Lock, Delete, X, CloudSun, ChevronUp } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
-import { useNow, formatTime, formatDate, haptic } from '../../os/hooks';
+import { useData } from '../../os/dataStore';
+import { useNow, formatTime, haptic } from '../../os/hooks';
+import DotClock from '../DotClock';
 import './LockScreen.css';
+
+const DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
 export default function LockScreen() {
   const now = useNow();
@@ -14,33 +19,35 @@ export default function LockScreen() {
   const openApp = useOS((s) => s.openApp);
   const setPower = useOS((s) => s.setPower);
   const patchSystem = useOS((s) => s.patchSystem);
+  const weather = useData((s) => s.weather[0]);
   const [pinMode, setPinMode] = useState(false);
   const [entered, setEntered] = useState('');
   const [shake, setShake] = useState(false);
-  const startY = useState<{ y: number } | null>(null);
+  const press = useRef<{ x: number; y: number; t: number } | null>(null);
 
   const unlock = () => {
-    haptic([15, 60, 20]);
+    haptic([12, 50, 16]);
     setPower('unlocked');
   };
 
-  const tryUnlock = () => {
-    if (!sys.pin) {
+  const requestUnlock = () => {
+    if (sys.pin) {
+      setPinMode(true);
+      haptic(10);
+    } else {
       unlock();
-      return;
     }
-    setPinMode(true);
   };
 
   const pressDigit = (d: string) => {
-    haptic(8);
+    haptic(7);
     if (d === 'del') {
       setEntered((p) => p.slice(0, -1));
       return;
     }
     const next = entered + d;
     setEntered(next);
-    if (next.length === sys.pin!.length) {
+    if (sys.pin && next.length === sys.pin.length) {
       setTimeout(() => {
         if (next === sys.pin) unlock();
         else {
@@ -55,13 +62,17 @@ export default function LockScreen() {
     }
   };
 
+  // A simple tap (or a swipe up) anywhere unlocks the phone.
   const onDown = (e: RPointerEvent) => {
-    startY[1]({ y: e.clientY });
+    press.current = { x: e.clientX, y: e.clientY, t: Date.now() };
   };
   const onUp = (e: RPointerEvent) => {
-    const s = startY[0];
-    startY[1](null);
-    if (s && s.y - e.clientY > 70) tryUnlock();
+    if (!press.current) return;
+    const dy = press.current.y - e.clientY;
+    const dt = Date.now() - press.current.t;
+    press.current = null;
+    if (pinMode) return;
+    if (dy > 60 || dt < 400) requestUnlock();
   };
 
   return (
@@ -69,111 +80,119 @@ export default function LockScreen() {
       className="lock-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      exit={{ opacity: 0, y: -40 }}
-      transition={{ duration: 0.35 }}
+      exit={{ opacity: 0, scale: 1.06 }}
+      transition={{ duration: 0.32, ease: [0.2, 0, 0, 1] }}
+      onPointerDown={onDown}
+      onPointerUp={onUp}
     >
-      <div className="lock-top">
-        <Lock size={13} className="lock-icon" />
-        <div className="lock-clock">{formatTime(now)}</div>
-        <div className="lock-date">{formatDate(now)}</div>
-        <div className="lock-battery">
-          <span className="lock-battery-pill">
-            <span style={{ width: `${sys.batteryLevel}%` }} />
-          </span>
-          {sys.batteryLevel}%{sys.charging ? ' · charging' : ''}
-        </div>
+      <div className="lock-status">
+        <Lock size={12} />
       </div>
 
-      <div className="lock-notifs app-scroll">
-        {!sys.lockNotifications ? (
-          <p className="lock-empty">Notifications are hidden on the lock screen</p>
-        ) : notifications.length === 0 ? (
-          <p className="lock-empty">No notifications</p>
-        ) : null}
-        <AnimatePresence>
-          {sys.lockNotifications && notifications.slice(0, 4).map((n) => {
-            const app = getApp(n.appId);
-            return (
-              <motion.div
-                key={n.id}
-                className="lock-notif"
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, x: -60 }}
-                onClick={() => {
-                  dismiss(n.id);
-                  setPower('unlocked');
-                  setTimeout(() => openApp(n.appId), 260);
-                }}
-              >
-                <span className="icon-tile" style={{ background: app.tile, width: 34, height: 34 }}>
-                  <app.Icon size={20} />
-                </span>
-                <div>
-                  <strong>{n.title}</strong>
-                  <p>{n.text}</p>
-                </div>
-                <button
-                  className="lock-notif-x"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    dismiss(n.id);
-                  }}
-                  aria-label="Dismiss"
-                >
-                  <X size={14} />
-                </button>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
-
-      <div className="lock-bottom" onPointerDown={onDown} onPointerUp={onUp}>
-        <div className="lock-shortcuts">
-          <button
-            className={`lock-circle ${sys.flashlight ? 'on' : ''}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              haptic(15);
-              patchSystem({ flashlight: !sys.flashlight });
-            }}
-            aria-label="Flashlight"
-          >
-            <Flashlight size={19} />
-          </button>
-          <button
-            className="lock-circle"
-            onClick={(e) => {
-              e.stopPropagation();
-              setPower('unlocked');
-              setTimeout(() => openApp('camera'), 260);
-            }}
-            aria-label="Camera"
-          >
-            <Camera size={19} />
-          </button>
-        </div>
-        {!pinMode && (
-          <div className="swipe-hint">
-            <ChevronUp size={20} className="animate-blink" />
-            <span>Swipe up to unlock</span>
-          </div>
+      <div className="lock-clock-block">
+        <DotClock value={formatTime(now)} size={84} />
+        <p className="lock-date">
+          {DAYS[now.getDay()]}, {now.getDate()} {MONTHS[now.getMonth()]}
+        </p>
+        {weather && (
+          <p className="lock-weather">
+            <CloudSun size={14} /> {weather.temp}° {weather.condition.toUpperCase()}
+          </p>
         )}
       </div>
 
+      {sys.lockNotifications && (
+        <div className="lock-notifs">
+          <AnimatePresence>
+            {notifications.slice(0, 2).map((n) => {
+              const app = getApp(n.appId);
+              return (
+                <motion.button
+                  key={n.id}
+                  className="lock-notif"
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -60 }}
+                  onPointerDown={(e) => e.stopPropagation()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    dismiss(n.id);
+                    if (sys.pin) setPinMode(true);
+                    else {
+                      setPower('unlocked');
+                      setTimeout(() => openApp(n.appId), 240);
+                    }
+                  }}
+                >
+                  <span className="icon-tile" style={{ background: app.tile, width: 32, height: 32 }}>
+                    <app.Icon size={18} />
+                  </span>
+                  <span className="lock-notif-text">
+                    <strong>{n.title}</strong>
+                    <small>{n.text}</small>
+                  </span>
+                  <span
+                    className="lock-notif-x"
+                    role="button"
+                    aria-label="Dismiss"
+                    onPointerDown={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dismiss(n.id);
+                    }}
+                  >
+                    <X size={13} />
+                  </span>
+                </motion.button>
+              );
+            })}
+          </AnimatePresence>
+          {notifications.length > 2 && <p className="lock-notif-more">+{notifications.length - 2} more notifications</p>}
+        </div>
+      )}
+
+      <div className="lock-bottom" onPointerDown={(e) => e.stopPropagation()}>
+        <button
+          className={`lock-circle ${sys.flashlight ? 'on' : ''}`}
+          onClick={() => {
+            haptic(14);
+            patchSystem({ flashlight: !sys.flashlight });
+          }}
+          aria-label="Flashlight"
+        >
+          <Flashlight size={19} />
+        </button>
+        <button className="lock-hint" onClick={requestUnlock} aria-label="Unlock">
+          <ChevronUp size={18} className="animate-blink" />
+        </button>
+        <button
+          className="lock-circle"
+          onClick={() => {
+            if (sys.pin) setPinMode(true);
+            else {
+              setPower('unlocked');
+              setTimeout(() => openApp('camera'), 240);
+            }
+          }}
+          aria-label="Camera"
+        >
+          <Camera size={19} />
+        </button>
+      </div>
+
       <AnimatePresence>
-        {pinMode && (
+        {pinMode && sys.pin && (
           <motion.div
             className={`pin-pad ${shake ? 'shake' : ''}`}
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             <p className="pin-title">Enter PIN</p>
             <div className="pin-dots">
-              {Array.from({ length: sys.pin!.length }).map((_, i) => (
+              {Array.from({ length: sys.pin.length }).map((_, i) => (
                 <span key={i} className={i < entered.length ? 'filled' : ''} />
               ))}
             </div>
@@ -184,12 +203,13 @@ export default function LockScreen() {
                   disabled={!k}
                   onClick={() => k && pressDigit(k)}
                   className={k === 'del' ? 'pin-del' : ''}
+                  aria-label={k || 'empty'}
                 >
                   {k === 'del' ? <Delete size={22} /> : k}
                 </button>
               ))}
             </div>
-            <button className="pin-cancel" onClick={() => setPinMode(false)}>
+            <button className="pin-cancel" onClick={() => { setPinMode(false); setEntered(''); }}>
               Cancel
             </button>
           </motion.div>

@@ -2,14 +2,15 @@ import { CloudSun, Battery, CalendarDays, Clock as ClockIcon } from 'lucide-reac
 import { useNow, formatTime } from '../../os/hooks';
 import { useOS } from '../../os/store';
 import { useData } from '../../os/dataStore';
+import DotClock from '../DotClock';
 import './Widgets.css';
 
 export function ClockWidget() {
   const now = useNow();
   return (
     <div className="widget widget-clock n-card">
-      <ClockIcon size={15} className="widget-glyph" />
-      <div className="widget-time">{formatTime(now)}</div>
+      <ClockIcon size={14} className="widget-glyph" />
+      <DotClock value={formatTime(now)} size={42} />
       <div className="widget-sub">
         {now.toLocaleDateString([], { weekday: 'short' })} ·{' '}
         {now.toLocaleDateString([], { month: 'short', day: 'numeric' })}
