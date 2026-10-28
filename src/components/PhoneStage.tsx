@@ -3,8 +3,18 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { RotateCcw, FlipHorizontal2, Plus, Minus, Power } from 'lucide-react';
 import { useOS } from '../os/store';
 import { haptic } from '../os/hooks';
-import { primeAudio, playUnlock, playLock, playNotification, playTick } from '../os/sound';
+import {
+  primeAudio,
+  playUnlock,
+  playLock,
+  playNotification,
+  playTick,
+  playCharge,
+  playUnplug,
+} from '../os/sound';
 import LockScreen from './lock/LockScreen';
+import AODScreen from './lock/AODScreen';
+import ChargingOverlay from './system/ChargingOverlay';
 import HomeScreen from './launcher/HomeScreen';
 import AppWindow from './system/AppWindow';
 import FloatingLayer from './system/FloatingLayer';
@@ -77,13 +87,31 @@ export default function PhoneStage() {
     return () => window.removeEventListener('resize', compute);
   }, []);
 
-  // Screen timeout -> lock (re-armed on every interaction)
+  // Screen timeout -> AOD (if enabled) then lock; re-armed on interaction
   const [activity, setActivity] = useState(0);
   useEffect(() => {
     if (powerState !== 'unlocked') return;
-    const t = setTimeout(() => setPower('locked'), sys.screenTimeout * 1000);
+    const t = setTimeout(
+      () => setPower(useOS.getState().system.aodEnabled ? 'aod' : 'locked'),
+      sys.screenTimeout * 1000,
+    );
     return () => clearTimeout(t);
-  }, [powerState, sys.screenTimeout, setPower, activity]);
+  }, [powerState, sys.screenTimeout, sys.aodEnabled, setPower, activity]);
+
+  // Charging connect/disconnect: sound + transient overlay
+  const [chargeFlash, setChargeFlash] = useState(false);
+  const prevCharging = useRef(sys.charging);
+  useEffect(() => {
+    if (prevCharging.current === sys.charging) return;
+    prevCharging.current = sys.charging;
+    if (sys.charging) {
+      playCharge();
+      setChargeFlash(true);
+      const t = setTimeout(() => setChargeFlash(false), 3200);
+      return () => clearTimeout(t);
+    }
+    playUnplug();
+  }, [sys.charging]);
 
   // Keyboard: Escape closes overlays first, otherwise acts as back
   useEffect(() => {
@@ -185,7 +213,7 @@ export default function PhoneStage() {
           data-theme={dark ? 'dark' : 'light'}
           data-accent={sys.accent}
         >
-          {/* Physical side buttons */}
+          {/* Physical side buttons — Phone (3): volume rocker + power on the right */}
           <div className="side-btn side-volume-up" onClick={() => volumeKey('up')} />
           <div className="side-btn side-volume-down" onClick={() => volumeKey('down')} />
           <div
@@ -193,7 +221,30 @@ export default function PhoneStage() {
             onPointerDown={pressPower}
             onPointerUp={releasePower}
             onPointerLeave={releasePower}
-          />
+          >
+            <span className="power-accent" />
+          </div>
+
+          {/* Left edge hardware */}
+          <div className="sim-tray" />
+          <span className="antenna antenna-l-top" />
+          <span className="antenna antenna-l-bottom" />
+          <span className="antenna antenna-r-top" />
+          <span className="antenna antenna-r-bottom" />
+
+          {/* Top edge: IR blaster + microphone pinhole */}
+          <span className="edge-ir" />
+          <span className="edge-mic edge-mic-top" />
+
+          {/* Bottom edge: speaker grilles, USB-C, microphone */}
+          <span className="speaker-holes speaker-left" aria-hidden>
+            {Array.from({ length: 5 }).map((_, i) => <i key={i} />)}
+          </span>
+          <span className="usb-c" />
+          <span className="speaker-holes speaker-right" aria-hidden>
+            {Array.from({ length: 5 }).map((_, i) => <i key={i} />)}
+          </span>
+          <span className="edge-mic edge-mic-bottom" />
 
           <div
             className="phone-screen"
@@ -206,6 +257,8 @@ export default function PhoneStage() {
             {/* edge-back gesture zones */}
             <div className="gesture-edge left" />
             <div className="gesture-edge right" />
+            {/* curved-glass reflection, purely decorative */}
+            <div className="glass-sheen" aria-hidden />
 
             {sys.customWallpaper ? (
               <div className="wallpaper" style={{ backgroundImage: `url(${sys.customWallpaper})` }} />
@@ -229,7 +282,9 @@ export default function PhoneStage() {
             )}
 
             {powerState === 'locked' && <LockScreen />}
+            {powerState === 'aod' && <AODScreen />}
             {powerState === 'booting' && <BootScreen />}
+            <ChargingOverlay show={chargeFlash} />
             {powerState === 'off' && (
               <div className="off-screen">
                 <Power size={30} color="#444" />
@@ -239,7 +294,7 @@ export default function PhoneStage() {
             <Shade />
             <BackView />
             <PinGate />
-            <StatusBar />
+            {powerState !== 'aod' && powerState !== 'off' && <StatusBar />}
             {powerState === 'unlocked' && <NavBar />}
             <Toast />
             <PowerMenu open={powerMenu} onClose={() => setPowerMenu(false)} />

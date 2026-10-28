@@ -31,7 +31,7 @@ const S = ({ size = 24, children, vb = 48 }: { size?: number; children: React.Re
 /** Authentic multicolor Google Chrome mark. */
 export const ChromeMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
-    <circle cx="24" cy="24" r="22" fill="#fff" />
+    <circle cx="24" cy="24" r="22" fill="#fff" stroke="rgba(0,0,0,0.12)" strokeWidth="1.2" />
     <path d="M24 4a20 20 0 0 1 17.3 10H24a10 10 0 0 0-9.6 7.1L7.7 9.6A19.9 19.9 0 0 1 24 4Z" fill="#EA4335" />
     <path d="M7.7 9.6 14.4 21a10 10 0 0 0 3.6 13.7l-6.7 11.6A20 20 0 0 1 4 24c0-5.5 2.2-10.5 5.7-14.1Z" fill="#FBBC05" />
     <path d="M24 14l8.7 5a10 10 0 0 1-3.6 18.3L18 44.3A20 20 0 1 0 24 4Z" fill="#34A853" />
@@ -45,10 +45,11 @@ export const ChromeMark: FC<AppIconProps> = ({ size = 24 }) => (
 export const PlayMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
     <rect width="48" height="48" rx="12" fill="#fff" />
-    <path d="M13 9.5 28.5 24 13 38.5a2.6 2.6 0 0 1-1-2V11.5c0-1 .6-1.7 1-2Z" fill="#34A853" />
-    <path d="M34 19.8 28.5 24 13 9.5l18.5 9.3a3 3 0 0 1 2.5 1Z" fill="#FBBC05" />
-    <path d="M34 28.2 13 38.5 28.5 24l5.5 4.2Z" fill="#EA4335" />
-    <path d="M37 22.3 34 19.8 28.5 24l5.5 4.2 3-1.7c1.7-1 1.7-3.4 0-4.2Z" fill="#4285F4" />
+    <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="11.25" fill="none" stroke="rgba(0,0,0,0.12)" strokeWidth="1.5" />
+    <path d="M13.2 9.2 28.8 24 13.2 38.8a2.7 2.7 0 0 1-1.1-2.2V11.4c0-1 .4-1.7 1.1-2.2Z" fill="#34A853" />
+    <path d="M34.4 19.6 28.8 24 13.2 9.2l19 9.6a3.1 3.1 0 0 1 2.2.8Z" fill="#FBBC05" />
+    <path d="M34.4 28.4 13.2 38.8 28.8 24l5.6 4.4Z" fill="#EA4335" />
+    <path d="M37.4 22.1 34.4 19.6 28.8 24l5.6 4.4 3-1.9c1.8-1.1 1.8-3.3 0-4.4Z" fill="#4285F4" />
   </S>
 );
 
@@ -67,6 +68,7 @@ export const PhoneMark: FC<AppIconProps> = ({ size = 24 }) => (
 export const MessagesMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
     <rect width="48" height="48" rx="12" fill="#fff" />
+    <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="11.25" fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" />
     <circle cx="33.5" cy="14.5" r="6.5" fill="#37C2ED" />
     <circle cx="15.5" cy="33" r="5.5" fill="#F9AB15" opacity="0.95" />
     <rect x="10" y="12" width="26" height="22" rx="11" fill="#0B57D0" />
@@ -96,6 +98,7 @@ export const CameraMark: FC<AppIconProps> = ({ size = 24 }) => (
 export const PhotosMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
     <rect width="48" height="48" rx="12" fill="#fff" />
+    <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="11.25" fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" />
     {[
       { rot: 0, c: '#4285F4' },
       { rot: 90, c: '#EA4335' },
@@ -116,6 +119,7 @@ export const PhotosMark: FC<AppIconProps> = ({ size = 24 }) => (
 export const ContactsMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
     <rect width="48" height="48" rx="12" fill="#fff" />
+    <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="11.25" fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" />
     <circle cx="24" cy="18" r="7.5" fill="#1A73E8" />
     <path d="M10 39c0-7.2 6.3-12 14-12s14 4.8 14 12v2H10v-2Z" fill="#1A73E8" />
   </S>
@@ -125,6 +129,7 @@ export const ContactsMark: FC<AppIconProps> = ({ size = 24 }) => (
 export const CalendarMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
     <rect width="48" height="48" rx="12" fill="#fff" />
+    <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="11.25" fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" />
     <path d="M0 12a12 12 0 0 1 12-12h24a12 12 0 0 1 12 12v8H0v-8Z" fill="#1A73E8" />
     <text x="24" y="15.5" textAnchor="middle" fontSize="11" fontWeight="700" fill="#fff" fontFamily="sans-serif">
       31
@@ -140,6 +145,7 @@ export const CalendarMark: FC<AppIconProps> = ({ size = 24 }) => (
 export const ClockMark: FC<AppIconProps> = ({ size = 24 }) => (
   <S size={size}>
     <rect width="48" height="48" rx="12" fill="#fff" />
+    <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="11.25" fill="none" stroke="rgba(0,0,0,0.10)" strokeWidth="1.5" />
     <circle cx="24" cy="25" r="16" fill="#fff" stroke="#E3E5E8" strokeWidth="2" />
     <circle cx="24" cy="11.5" r="2" fill="#EA4335" />
     <circle cx="37.5" cy="25" r="2" fill="#FBBC05" />

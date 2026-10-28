@@ -1,4 +1,4 @@
-import { useRef, useState, type PointerEvent as RPointerEvent } from 'react';
+import { useRef, useSyncExternalStore, type PointerEvent as RPointerEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   Wifi,
@@ -26,6 +26,7 @@ import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
 import { useNow, formatTime, haptic } from '../../os/hooks';
 import { playTick } from '../../os/sound';
+import { music } from '../../os/music';
 import './Shade.css';
 
 interface TileDef {
@@ -95,7 +96,7 @@ export default function Shade() {
   const dismiss = useOS((s) => s.dismissNotification);
   const clearAll = useOS((s) => s.clearNotifications);
   const openApp = useOS((s) => s.openApp);
-  const [playing, setPlaying] = useState(false);
+  const media = useSyncExternalStore(music.subscribe, music.getSnapshot);
   const now = useNow(30_000);
   const longTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -213,25 +214,47 @@ export default function Shade() {
               <PillSlider value={sys.mediaVol} onChange={(v) => patch({ mediaVol: v })} Icon={Volume2} label="Volume" />
             </div>
 
-            {/* Media player */}
+            {/* Media player — real synthesized audio via the music engine */}
             <div className="media-card">
-              <div className="media-art dot-matrix" />
+              <div className={`media-art dot-matrix ${media.playing ? 'eq' : ''}`} aria-hidden>
+                {media.playing &&
+                  Array.from({ length: 4 }).map((_, i) => <i key={i} style={{ animationDelay: `${i * 130}ms` }} />)}
+              </div>
               <div className="media-meta">
-                <strong>Glyph Demo — Synthwave</strong>
-                <small>Nothing Sounds · simulated</small>
+                <strong>{media.track.title}</strong>
+                <small>{media.track.artist}</small>
+                <div className="media-progress" aria-hidden>
+                  <span style={{ width: `${Math.round(media.progress * 100)}%` }} />
+                </div>
                 <div className="media-controls">
-                  <button aria-label="Previous"><SkipBack size={16} /></button>
                   <button
-                    className="media-play"
-                    aria-label={playing ? 'Pause' : 'Play'}
+                    aria-label="Previous"
                     onClick={() => {
-                      setPlaying(!playing);
-                      if (!playing) patch({ glyphEffect: 'meter' });
+                      haptic(8);
+                      music.prev();
                     }}
                   >
-                    {playing ? <Pause size={17} /> : <Play size={17} />}
+                    <SkipBack size={16} />
                   </button>
-                  <button aria-label="Next"><SkipForward size={16} /></button>
+                  <button
+                    className="media-play"
+                    aria-label={media.playing ? 'Pause' : 'Play'}
+                    onClick={() => {
+                      haptic(10);
+                      music.toggle();
+                    }}
+                  >
+                    {media.playing ? <Pause size={17} /> : <Play size={17} />}
+                  </button>
+                  <button
+                    aria-label="Next"
+                    onClick={() => {
+                      haptic(8);
+                      music.next();
+                    }}
+                  >
+                    <SkipForward size={16} />
+                  </button>
                 </div>
               </div>
             </div>

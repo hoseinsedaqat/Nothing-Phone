@@ -123,6 +123,28 @@
 .glyph-matrix.fx-meter .glyph-dot { animation: glyphMeter 0.9s ease-in-out infinite alternate; }
 .glyph-matrix.fx-off .glyph-dot { opacity: 0.06; box-shadow: none; }
 
+/* Charging: green sequential wave across the whole Glyph Matrix */
+.glyph-matrix.fx-charging .glyph-dot {
+  background: #30d158;
+  box-shadow: 0 0 10px rgba(48, 209, 88, 0.7);
+  animation: glyphCharge 1.2s ease-in-out infinite;
+}
+.glyph-matrix.fx-charging .glyph-dot:nth-child(3n) { animation-delay: 0.15s; }
+.glyph-matrix.fx-charging .glyph-dot:nth-child(3n + 1) { animation-delay: 0.3s; }
+@keyframes glyphCharge {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 1; }
+}
+.glyph-strip.charging {
+  background: #30d158;
+  box-shadow: 0 0 18px rgba(48, 209, 88, 0.8);
+  animation: stripCharge 1.4s ease-in-out infinite;
+}
+@keyframes stripCharge {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
 @keyframes glyphPulse { 0%, 100% { opacity: calc(0.15 * var(--intensity, .7)); } 50% { opacity: var(--intensity, .7); } }
 @keyframes glyphWave {
   0%, 100% { opacity: calc(0.12 * var(--intensity, .7)); transform: translateY(4px); }
@@ -153,6 +175,42 @@
   text-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
 }
 .back-caption { color: #6e6e73; font-size: 11.5px; letter-spacing: 0.06em; }
+
+.back-brand {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.back-dot-logo {
+  display: flex;
+  gap: 5px;
+}
+.back-dot-logo i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+}
+.back-dot-logo i.lit {
+  background: #d71921;
+  box-shadow: 0 0 8px rgba(215, 25, 33, 0.8);
+}
+.back-brand strong {
+  font-size: 15px;
+  font-weight: 400;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: rgba(255, 255, 255, 0.85);
+}
+.back-brand small {
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  color: #5d5d63;
+}
 .back-controls { display: flex; gap: 10px; margin-top: auto; }
 .glyph-effect-grid { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 8px; }
 .glyph-timer-row { display: flex; flex-wrap: wrap; gap: 8px; }

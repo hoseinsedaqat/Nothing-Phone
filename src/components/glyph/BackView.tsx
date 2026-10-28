@@ -101,11 +101,20 @@ export default function BackView() {
             </div>
 
             {/* LED strips */}
-            <div className={`glyph-strip top ${active ? `fx-${sys.glyphEffect}` : ''}`} style={{ opacity: active ? intensity : 0.08 }} />
-            <div className={`glyph-strip side ${active ? `fx-${sys.glyphEffect}` : ''}`} style={{ opacity: active ? intensity : 0.08 }} />
+            <div
+              className={`glyph-strip top ${sys.charging ? 'charging' : active ? `fx-${sys.glyphEffect}` : ''}`}
+              style={{ opacity: sys.charging ? 1 : active ? intensity : 0.08 }}
+            />
+            <div
+              className={`glyph-strip side ${sys.charging ? 'charging' : active ? `fx-${sys.glyphEffect}` : ''}`}
+              style={{ opacity: sys.charging ? 1 : active ? intensity : 0.08 }}
+            />
 
             {/* Glyph Matrix */}
-            <div className={`glyph-matrix fx-${active ? sys.glyphEffect : 'off'}`} style={{ ['--intensity' as string]: intensity }}>
+            <div
+              className={`glyph-matrix ${sys.charging ? 'fx-charging' : `fx-${active ? sys.glyphEffect : 'off'}`}`}
+              style={{ ['--intensity' as string]: intensity }}
+            >
               {Array.from({ length: 12 * 7 }).map((_, i) => (
                 <span
                   key={i}
@@ -139,6 +148,14 @@ export default function BackView() {
             )}
 
             <p className="back-caption">Glyph Matrix · simulated LED display</p>
+
+            <div className="back-brand" aria-label="Nothing">
+              <span className="back-dot-logo">
+                {[0, 1, 2, 3, 4].map((d) => <i key={d} className={d <= 1 ? 'lit' : ''} />)}
+              </span>
+              <strong>Nothing</strong>
+              <small>PHONE (3)</small>
+            </div>
 
             <div className="back-controls">
               <button className="n-btn" onClick={() => setSheet(true)}>

@@ -60,7 +60,14 @@ export const APP_REGISTRY: AppDefinition[] = Object.entries(APP_META).map(([id, 
       return <meta.Color size={size} />;
     }
     const Mono = meta.Mono as LucideIcon;
-    return <Mono size={size * 0.62} strokeWidth={1.8} color="#f5f5f7" />;
+    // Luminance-aware glyph: a white tile needs a dark glyph (the old
+    // white-on-white Play Store bug), dark tiles keep the light glyph.
+    const hex = meta.tile.replace('#', '');
+    const r = parseInt(hex.slice(0, 2), 16) / 255;
+    const g = parseInt(hex.slice(2, 4), 16) / 255;
+    const b = parseInt(hex.slice(4, 6), 16) / 255;
+    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return <Mono size={size * 0.62} strokeWidth={1.8} color={lum > 0.6 ? '#1c1c1e' : '#f5f5f7'} />;
   },
   limitation: {
     phone: 'Calls are simulated — no real telephony in a web app.',
