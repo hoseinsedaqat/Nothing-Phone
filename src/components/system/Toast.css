@@ -1,0 +1,19 @@
+.os-toast {
+  position: absolute;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(28, 28, 30, 0.95);
+  border: 1px solid var(--stroke);
+  color: #f5f5f7;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 460;
+  white-space: nowrap;
+  max-width: 86%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}

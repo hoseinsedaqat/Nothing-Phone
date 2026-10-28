@@ -1,0 +1,40 @@
+.clock-app { padding-bottom: 0; }
+.clock-body { padding-bottom: 10px; }
+.clock-tabs {
+  flex: none;
+  display: flex;
+  border-top: 1px solid var(--stroke);
+  padding: 6px 4px 18px;
+  background: var(--bg-elevated);
+}
+.clock-tabs button {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  color: var(--text-3);
+  padding: 6px 0;
+}
+.clock-tabs button.active { color: var(--accent); }
+.alarm-time { font-size: 24px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.inline-icon { color: var(--text-3); padding: 8px; }
+.world-time { font-size: 20px; font-weight: 300; font-variant-numeric: tabular-nums; }
+.stopwatch { display: flex; flex-direction: column; align-items: center; padding: 30px 10px; gap: 22px; }
+.sw-display {
+  font-size: 60px;
+  font-weight: 200;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.sw-buttons { display: flex; gap: 12px; }
+.timer-presets { display: flex; gap: 8px; }
+.sw-laps { width: 100%; max-height: 220px; display: flex; flex-direction: column; }
+.sw-lap {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--stroke);
+  font-size: 14px;
+}

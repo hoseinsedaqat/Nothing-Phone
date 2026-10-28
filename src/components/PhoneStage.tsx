@@ -1,0 +1,253 @@
+import { useEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { RotateCcw, FlipHorizontal2, Plus, Minus, Power } from 'lucide-react';
+import { useOS } from '../os/store';
+import { haptic } from '../os/hooks';
+import LockScreen from './lock/LockScreen';
+import HomeScreen from './launcher/HomeScreen';
+import AppWindow from './system/AppWindow';
+import FloatingLayer from './system/FloatingLayer';
+import AppDrawer from './launcher/AppDrawer';
+import Shade from './shade/Shade';
+import Recents from './system/Recents';
+import GlobalSearch from './system/GlobalSearch';
+import BackView from './glyph/BackView';
+import PinGate from './lock/PinGate';
+import StatusBar from './StatusBar';
+import NavBar from './NavBar';
+import Toast from './system/Toast';
+import BootScreen from './system/BootScreen';
+import PowerMenu from './system/PowerMenu';
+import './PhoneStage.css';
+
+const W = 393;
+const H = 852;
+
+export default function PhoneStage() {
+  const [zoom, setZoom] = useState(1);
+  const [fit, setFit] = useState(1);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const sys = useOS((s) => s.system);
+  const powerState = sys.powerState;
+  const activeAppId = useOS((s) => s.activeAppId);
+  const setPower = useOS((s) => s.setPower);
+  const setShade = useOS((s) => s.setShade);
+  const setDrawer = useOS((s) => s.setDrawer);
+  const goHome = useOS((s) => s.goHome);
+  const [powerMenu, setPowerMenu] = useState(false);
+  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Responsive fit
+  useEffect(() => {
+    const compute = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const f = Math.min((vw - 16) / W, (vh - 16) / H);
+      setFit(vw < 520 ? Math.min(f, 1.12) : Math.min(f, 1));
+    };
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, []);
+
+  // Screen timeout -> lock (re-armed on every interaction)
+  const [activity, setActivity] = useState(0);
+  useEffect(() => {
+    if (powerState !== 'unlocked') return;
+    const t = setTimeout(() => setPower('locked'), sys.screenTimeout * 1000);
+    return () => clearTimeout(t);
+  }, [powerState, sys.screenTimeout, setPower, activity]);
+
+  // Keyboard: Escape closes overlays first, otherwise acts as back
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      const st = useOS.getState();
+      if (st.shadeMode !== 'closed') st.setShade('closed');
+      else if (st.drawerOpen) st.setDrawer(false);
+      else if (st.recentsOpen) st.setRecents(false);
+      else if (st.searchOpen) st.setSearch(false);
+      else window.dispatchEvent(new CustomEvent('os-back'));
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // os-exit-app -> home
+  useEffect(() => {
+    const h = () => goHome();
+    window.addEventListener('os-exit-app', h);
+    return () => window.removeEventListener('os-exit-app', h);
+  }, [goHome]);
+
+  // ── Pointer gestures (coordinates converted to logical 393×852) ──
+  const start = useRef<{ x: number; y: number; t: number } | null>(null);
+  const screenRef = useRef<HTMLDivElement>(null);
+  const toLocal = (clientX: number, clientY: number) => {
+    const rect = screenRef.current?.getBoundingClientRect();
+    if (!rect) return { x: clientX, y: clientY };
+    return {
+      x: ((clientX - rect.left) / rect.width) * W,
+      y: ((clientY - rect.top) / rect.height) * H,
+    };
+  };
+  const onPointerDown = (e: RPointerEvent) => {
+    setActivity((a) => a + 1);
+    start.current = { ...toLocal(e.clientX, e.clientY), t: Date.now() };
+  };
+  const onPointerUp = (e: RPointerEvent) => {
+    if (!start.current) return;
+    const end = toLocal(e.clientX, e.clientY);
+    const dx = end.x - start.current.x;
+    const dy = end.y - start.current.y;
+    const { x, y } = start.current;
+    start.current = null;
+    const st = useOS.getState();
+    if (st.system.powerState !== 'unlocked') return;
+    // Edge back
+    if ((x < 14 || x > W - 14) && Math.abs(dx) > 48 && Math.abs(dy) < 60) {
+      haptic(10);
+      window.dispatchEvent(new CustomEvent('os-back'));
+      return;
+    }
+    // Pull down shade
+    if (y < 46 && dy > 64) {
+      haptic(12);
+      setShade(dy > 240 ? 'qs' : 'notifications');
+      return;
+    }
+    // Swipe up from bottom
+    if (y > H - 30 && dy < -70) {
+      haptic(12);
+      if (st.activeAppId || st.floating.length) goHome();
+      else setDrawer(true);
+      return;
+    }
+  };
+
+  const scale = fit * zoom;
+  const dark = sys.darkMode;
+
+  const pressPower = () => {
+    pressTimer.current = setTimeout(() => {
+      haptic([20, 40, 20]);
+      setPowerMenu(true);
+      pressTimer.current = null;
+    }, 550);
+  };
+  const releasePower = () => {
+    if (!pressTimer.current) return;
+    clearTimeout(pressTimer.current);
+    pressTimer.current = null;
+    if (powerState === 'off') setPower('booting');
+    else if (powerState === 'locked') setPower('locked');
+    else setPower('locked');
+  };
+
+  return (
+    <div className="stage" ref={stageRef}>
+      <div
+        className="phone-scaler"
+        style={{ width: W * scale, height: H * scale }}
+      >
+        <div
+          className="phone-frame"
+          style={{ transform: `scale(${scale})`, width: W, height: H }}
+          data-theme={dark ? 'dark' : 'light'}
+          data-accent={sys.accent}
+        >
+          {/* Physical side buttons */}
+          <div className="side-btn side-volume-up" onClick={() => volumeKey('up')} />
+          <div className="side-btn side-volume-down" onClick={() => volumeKey('down')} />
+          <div
+            className="side-btn side-power"
+            onPointerDown={pressPower}
+            onPointerUp={releasePower}
+            onPointerLeave={releasePower}
+          />
+
+          <div
+            className="phone-screen"
+            ref={screenRef}
+            onPointerDown={onPointerDown}
+            onPointerUp={onPointerUp}
+          >
+            {/* punch-hole camera */}
+            <div className="punch-hole" />
+            {/* edge-back gesture zones */}
+            <div className="gesture-edge left" />
+            <div className="gesture-edge right" />
+
+            {sys.customWallpaper ? (
+              <div className="wallpaper" style={{ backgroundImage: `url(${sys.customWallpaper})` }} />
+            ) : (
+              <div className={`wallpaper wp-${sys.wallpaper}`} />
+            )}
+            <div
+              className="brightness-veil"
+              style={{ opacity: ((100 - sys.brightness) / 100) * 0.72 }}
+            />
+
+            {powerState === 'unlocked' && (
+              <>
+                <HomeScreen />
+                <AnimatePresence>{activeAppId && <AppWindow key={activeAppId} appId={activeAppId} />}</AnimatePresence>
+                <FloatingLayer />
+                <AppDrawer />
+                <Recents />
+                <GlobalSearch />
+              </>
+            )}
+
+            {powerState === 'locked' && <LockScreen />}
+            {powerState === 'booting' && <BootScreen />}
+            {powerState === 'off' && (
+              <div className="off-screen">
+                <Power size={30} color="#444" />
+              </div>
+            )}
+
+            <Shade />
+            <BackView />
+            <PinGate />
+            <StatusBar />
+            {powerState === 'unlocked' && <NavBar />}
+            <Toast />
+            <PowerMenu open={powerMenu} onClose={() => setPowerMenu(false)} />
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop controls */}
+      <div className="stage-controls">
+        <button onClick={() => setZoom((z) => Math.max(0.7, +(z - 0.1).toFixed(2)))} aria-label="Zoom out">
+          <Minus size={16} />
+        </button>
+        <button onClick={() => setZoom(1)} aria-label="Reset zoom">
+          <RotateCcw size={15} />
+        </button>
+        <button onClick={() => setZoom((z) => Math.min(1.35, +(z + 0.1).toFixed(2)))} aria-label="Zoom in">
+          <Plus size={16} />
+        </button>
+        <button
+          onClick={() => useOS.getState().patchSystem({ showBackView: !sys.showBackView })}
+          aria-label="Flip phone"
+          className={sys.showBackView ? 'active' : ''}
+        >
+          <FlipHorizontal2 size={16} />
+        </button>
+      </div>
+      <p className="stage-hint">
+        Nothing Phone (3) simulator · drag from top for notifications · swipe up for home/drawer ·
+        edges to go back · Esc = back
+      </p>
+    </div>
+  );
+}
+
+function volumeKey(dir: 'up' | 'down') {
+  const s = useOS.getState();
+  const next = Math.min(100, Math.max(0, s.system.mediaVol + (dir === 'up' ? 8 : -8)));
+  s.patchSystem({ mediaVol: next });
+  s.showToast(`Media volume ${next}%`);
+}

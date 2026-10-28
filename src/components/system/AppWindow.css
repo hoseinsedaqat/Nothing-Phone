@@ -1,0 +1,8 @@
+.app-window {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  overflow: hidden;
+  border-radius: 0;
+}

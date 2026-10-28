@@ -1,0 +1,192 @@
+/* ── Shared app chrome & primitives ───────────────────────── */
+.app-chrome {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  padding-bottom: 48px;
+}
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 44px 10px 10px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--stroke);
+  z-index: 5;
+  flex: none;
+}
+.app-header.transparent {
+  background: transparent;
+  border-bottom: none;
+}
+.app-header h1 {
+  flex: 1;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app-header-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.app-header-btn:active { background: var(--bg-hover); }
+.app-header-actions { display: flex; align-items: center; gap: 4px; }
+.app-body { flex: 1; min-height: 0; padding-bottom: 14px; }
+
+.row-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card-2);
+  color: var(--accent);
+  flex: none;
+}
+.row-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.row-text span { font-size: 15px; font-weight: 500; }
+.row-text small { color: var(--text-2); font-size: 12.5px; margin-top: 2px; }
+.row-text .danger-text { color: #ff453a; }
+.row-chevron { color: var(--text-3); flex: none; }
+
+.segmented {
+  display: flex;
+  background: var(--bg-card-2);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 2px;
+}
+.segmented button {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.segmented button.active {
+  background: var(--bg-card);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Bottom sheet & dialog ────────────────────────────────── */
+.sheet-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+  z-index: 400;
+  display: flex;
+  align-items: flex-end;
+}
+.sheet {
+  width: 100%;
+  max-height: 82%;
+  background: var(--bg-elevated);
+  border-radius: 26px 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--stroke);
+  border-bottom: none;
+}
+.sheet-grabber {
+  width: 38px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--stroke-strong);
+  margin: 10px auto 4px;
+  flex: none;
+}
+.sheet-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px 10px 20px;
+}
+.sheet-title h2 { font-size: 18px; font-weight: 700; }
+.sheet-body { padding: 0 16px 28px; }
+
+.dialog-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+.dialog {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--stroke);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+.dialog h3 { font-size: 17px; font-weight: 700; }
+.dialog p { font-size: 13.5px; color: var(--text-2); line-height: 1.5; }
+.dialog-actions { display: flex; gap: 10px; margin-top: 10px; width: 100%; }
+.dialog-actions .n-btn { flex: 1; }
+
+.empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--stroke);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+/* ── Fabric / FAB ─────────────────────────────────────────── */
+.fab {
+  position: absolute;
+  right: 18px;
+  bottom: 82px;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  z-index: 20;
+}
+.fab:active { transform: scale(0.93); }
+
+.chip {
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  background: var(--bg-card-2);
+  border: 1px solid var(--stroke);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.chip.active { background: var(--accent); color: #fff; border-color: transparent; }
