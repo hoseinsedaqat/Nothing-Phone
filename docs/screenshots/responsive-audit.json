@@ -37,8 +37,7 @@
   },
   {
     "capture": "06-glyph-back",
-    "ok": false,
-    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByRole('button', { name: 'Flip phone' })\n"
+    "ok": true
   },
   {
     "capture": "07-always-on-display",
