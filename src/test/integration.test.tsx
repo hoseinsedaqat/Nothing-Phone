@@ -27,6 +27,19 @@ describe('full simulator integration', () => {
     expect(document.querySelector('.dot-clock')).toBeInTheDocument();
   });
 
+  it('shows the Always-On Display and wakes to the lock screen on tap', () => {
+    render(<App />);
+    act(() => useOS.getState().setPower('aod'));
+    const aod = document.querySelector('.aod-screen')!;
+    expect(aod).toBeInTheDocument();
+    expect(document.querySelector('.aod-screen .dot-clock')).toBeInTheDocument();
+    expect(screen.getByText('TAP TO WAKE')).toBeInTheDocument();
+    act(() => {
+      aod.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+    });
+    expect(useOS.getState().system.powerState).toBe('locked');
+  });
+
   it('unlocks with a single tap on the lock screen', () => {
     render(<App />);
     const lock = document.querySelector('.lock-screen')!;

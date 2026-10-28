@@ -18,6 +18,7 @@ const defaultSystem: SystemState = {
   fontScale: 'default',
   displaySize: 1,
   screenTimeout: 30,
+  aodEnabled: true,
   wallpaper: 'nothing',
   customWallpaper: null,
   accent: 'red',

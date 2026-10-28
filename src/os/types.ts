@@ -2,7 +2,7 @@
 // Central type definitions for the Nothing Phone (3) simulator
 // ─────────────────────────────────────────────────────────────
 
-export type PowerState = 'off' | 'booting' | 'locked' | 'unlocked';
+export type PowerState = 'off' | 'booting' | 'locked' | 'aod' | 'unlocked';
 export type GlyphEffect = 'off' | 'pulse' | 'wave' | 'ripple' | 'meter' | 'matrix';
 
 export interface SystemState {
@@ -14,6 +14,7 @@ export interface SystemState {
   fontScale: 'small' | 'default' | 'large';
   displaySize: number; // 0.85 – 1.15
   screenTimeout: number; // seconds
+  aodEnabled: boolean;
   wallpaper: string;
   customWallpaper: string | null;
   accent: string;

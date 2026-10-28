@@ -1,6 +1,6 @@
 import { useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Flashlight, Camera, Lock, Delete, X, CloudSun, ChevronUp } from 'lucide-react';
+import { Flashlight, Camera, Lock, Delete, X, CloudSun, ChevronUp, BatteryCharging } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { getApp } from '../../os/registry';
 import { useData } from '../../os/dataStore';
@@ -88,7 +88,13 @@ export default function LockScreen() {
       onPointerUp={onUp}
     >
       <div className="lock-status">
-        <Lock size={12} />
+        {sys.charging ? (
+          <span className="lock-charging">
+            <BatteryCharging size={13} /> Charging · {sys.batteryLevel}%
+          </span>
+        ) : (
+          <Lock size={12} />
+        )}
       </div>
 
       <div className="lock-clock-block">

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import {
   Wifi, Bluetooth, Plane, Radio, Signal, Monitor, Moon, Sun, Palette, Type,
   Expand, Timer, Bell, Volume2, Vibrate, BatteryFull, Leaf, HardDrive, Shield,
-  Lock, Sparkles, Info, Check, Trash2, Plus, RefreshCw, Download, Upload, Music2,
+  Lock, Sparkles, Info, Check, Trash2, Plus, RefreshCw, Download, Upload, Music2, Clock3,
 } from 'lucide-react';
 import { useOS } from '../../os/store';
 import { useData } from '../../os/dataStore';
@@ -11,7 +11,7 @@ import { Row, Switch, Slider, Segmented, EmptyState, ConfirmDialog, Sheet } from
 import SectionShell, { type SectionProps } from './SectionShell';
 import { exportAllData, importAllData, resetAllSlices, resetSlice, uid } from '../../os/storage';
 import { WALLPAPERS, ACCENTS, RINGTONES, TIMEOUTS } from './settingsOptions';
-import { playRingtonePreview } from '../../os/sound';
+import { playRingtone } from '../../os/sound';
 import './SettingsApp.css';
 
 const P = ({ children }: { children: React.ReactNode }) => <p className="n-section-title">{children}</p>;
@@ -145,6 +145,12 @@ export function DisplaySection({ onBack }: SectionProps) {
         />
       </div>
       <div className="n-list-group" style={{ margin: 12 }}>
+        <Row
+          icon={<Clock3 size={17} />}
+          label="Always-on display"
+          sub="Dim dot-matrix clock after screen timeout"
+          right={<Switch on={sys.aodEnabled} onChange={(v) => patch({ aodEnabled: v })} />}
+        />
         <Row icon={<Moon size={17} />} label="Extra dark" sub="Deepens black surfaces" right={<Switch on={sys.extraDark} onChange={(v) => patch({ extraDark: v })} />} />
         <Row icon={<Type size={17} />} label="Font size" sub={sys.fontScale} />
       </div>
@@ -375,7 +381,7 @@ export function NotificationsSection({ onBack }: SectionProps) {
 export function SoundSection({ onBack }: SectionProps) {
   const sys = useOS((s) => s.system);
   const patch = useOS((s) => s.patchSystem);
-  const beep = () => playRingtonePreview();
+  const showToast = useOS((s) => s.showToast);
   return (
     <SectionShell title="Sound & vibration" onBack={onBack}>
       <P>Media · {sys.mediaVol}%</P>
@@ -403,7 +409,7 @@ export function SoundSection({ onBack }: SectionProps) {
             label={r}
             onClick={() => {
               patch({ ringtone: r });
-              beep();
+              if (!playRingtone(r)) showToast('Silent ringtone — vibration only');
             }}
             right={sys.ringtone === r ? <Check size={17} color="var(--accent)" /> : undefined}
           />

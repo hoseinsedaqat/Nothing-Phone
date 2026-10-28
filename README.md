@@ -1,5 +1,7 @@
 # Nothing Phone (3) — Interactive Web Simulator
 
+![Nothing Phone (3) social preview](docs/social-preview.png)
+
 ![Nothing Phone (3) simulator banner](docs/hero.svg)
 
 A fully interactive, web-based simulation of the **Nothing Phone (3)** running **Nothing OS 5.0**.
@@ -27,6 +29,13 @@ Nothing's black / white / red dot-matrix design language. Zero backend, fully of
   and curved-glass reflection.
 - 🔓 **Lock screen** — authentic LED dot-matrix clock, tap-anywhere or swipe-up unlock, compact
   notification stack, flashlight/camera shortcuts, optional demo PIN.
+- 🌙 **Always-On Display** — after the screen timeout, a dim dot-matrix AOD shows time, battery and
+  unread count; tap anywhere to wake. Toggle in Settings → Display.
+- 🔋 **Charging experience** — connect the simulated charger (Settings → Battery) for a ring
+  animation, lock-screen pill and a green wave across the rear Glyph Matrix, with connect/unplug sounds.
+- 🎵 **Real synthesized music player** — the control-center media card runs a Web Audio step
+  sequencer (lead, bass, kick, hi-hat) across three tracks, with live progress, prev/next and an
+  animated equalizer. Five melodic ringtones are synthesized per-note in Settings → Sound.
 - 🔘 **Nothing-style control center** — circular quick toggles, unified brightness/volume pill
   sliders, media card, long-press a tile to jump to its settings.
 - 💡 **Glyph Matrix (rear view)** — pulse / wave / ripple / volume-meter / matrix effects,
@@ -131,12 +140,13 @@ public/
 
 ## Tests
 
-`npm test` runs **86 tests** across 8 suites:
+`npm test` runs **98 tests** across 9 suites:
 - storage resilience (corrupt JSON, migrations/merges, export/import, reset),
 - accounting math (balances, transfers cannot create money, categories, CSV),
 - browser helpers (URL normalization, tab lifecycle, incognito history),
 - OS store (recents, notifications opt-out, floating window limits, launcher moves),
-- sound engine (synthesized notes, DTMF pairs, DND/silent muting, no-throw fallback),
+- sound engine (synthesized notes, DTMF pairs, melodic ringtones, charge sounds, DND/silent muting, no-throw fallback),
+- music sequencer (play/pause, track cycling, step scheduling, snapshot stability) and charging overlay,
 - stylesheet coverage guard (every CSS file must be imported — prevents invisible-component regressions),
 - component/integration smoke tests that boot the whole simulator, unlock it with a tap,
   open every app and exercise the control center.
@@ -153,6 +163,13 @@ This is a web page, not a phone OS, so it **cannot**:
 
 Camera/microphone use genuine browser Web APIs (with permission) and gracefully fall back to
 demo modes when denied or unsupported.
+
+## Repo social preview
+
+`docs/social-preview.png` (1280×640) is generated from `docs/social-preview.svg` via
+`npm run social` (uses the dev-only `@resvg/resvg-js` rasterizer). To use it as the repository's
+social preview image, upload it manually at **Settings → General → Social preview** — the GitHub
+API token used in CI lacks the admin scope required to upload it programmatically.
 
 ## Deployment
 

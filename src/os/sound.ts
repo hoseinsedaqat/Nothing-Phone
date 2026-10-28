@@ -164,3 +164,65 @@ export function playRingtonePreview() {
   tone({ freq: 783.99, duration: 0.12, gain: 0.14, delay: 0.12 });
   tone({ freq: 987.77, duration: 0.2, gain: 0.14, delay: 0.24 });
 }
+
+// ── Melodic ringtones ────────────────────────────────────────
+const NOTE_FREQ: Record<string, number> = {
+  C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.0, A3: 220.0, B3: 246.94,
+  C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.0, A4: 440.0, B4: 493.88,
+  C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880.0, B5: 987.77,
+  C6: 1046.5,
+};
+
+type Step = [note: string, beats: number];
+const RINGTONE_SCORE: Record<string, { type: OscillatorType; bpm: number; steps: Step[] }> = {
+  'Nothing Chime': {
+    type: 'sine', bpm: 150,
+    steps: [['D5', 1], ['B4', 1], ['G5', 2]],
+  },
+  'Glyph Tone': {
+    type: 'triangle', bpm: 132,
+    steps: [['C5', 1], ['E5', 1], ['G5', 1], ['C6', 2]],
+  },
+  'Dot Matrix': {
+    type: 'square', bpm: 168,
+    steps: [['G4', 0.5], ['C5', 0.5], ['G4', 0.5], ['C5', 0.5], ['E5', 1.5]],
+  },
+  'Minimal Bell': {
+    type: 'sine', bpm: 112,
+    steps: [['A4', 2], ['E5', 2], ['A5', 3]],
+  },
+  'Deep Pulse': {
+    type: 'sawtooth', bpm: 100,
+    steps: [['C3', 1], ['G3', 1], ['C4', 1], ['G4', 2.5]],
+  },
+};
+
+/** Play a named ringtone. Returns false for the silent option. */
+export function playRingtone(name: string): boolean {
+  if (!useOS.getState().system.soundEffects) return false;
+  const score = RINGTONE_SCORE[name];
+  if (!score) return false;
+  const beat = 60 / score.bpm;
+  const ringGain = 0.13 * (useOS.getState().system.ringVol / 100);
+  let t = 0;
+  for (const [note, beats] of score.steps) {
+    const dur = beat * beats * 0.92;
+    tone({ freq: NOTE_FREQ[note], duration: dur, type: score.type, gain: ringGain, delay: t });
+    t += beat * beats;
+  }
+  return true;
+}
+
+/** Charging connection: rising sweep followed by a warm confirm chime. */
+export function playCharge() {
+  if (!allowed()) return;
+  tone({ freq: 240, freqEnd: 760, duration: 0.22, type: 'triangle', gain: 0.12 });
+  tone({ freq: 1046.5, duration: 0.14, gain: 0.1, delay: 0.16 });
+  tone({ freq: 1567.98, duration: 0.22, gain: 0.1, delay: 0.26 });
+}
+
+/** Charge unplug sound — soft downward sweep. */
+export function playUnplug() {
+  if (!allowed()) return;
+  tone({ freq: 660, freqEnd: 260, duration: 0.18, type: 'triangle', gain: 0.1 });
+}
