@@ -8,16 +8,16 @@
     "clientWidth": 390,
     "horizontalOverflow": false,
     "frame": {
-      "left": 18,
-      "right": 392,
-      "top": 37,
-      "bottom": 848
+      "left": 8,
+      "right": 382,
+      "top": 17,
+      "bottom": 827
     },
     "screen": {
       "width": 355,
       "height": 792
     },
-    "frameFitsViewport": false
+    "frameFitsViewport": true
   },
   {
     "capture": "01-lock-screen",
@@ -34,7 +34,7 @@
   {
     "capture": "04-calculator",
     "ok": false,
-    "error": "locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for getByText('Calculator', { exact: true }).first()\n    - locator resolved to <span class=\"app-icon-label\">Calculator</span>\n  - attempting click action\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"drawer-grid app-scroll\">…</div> from <div class=\"drawer-scrim\">…</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 × waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"drawer-grid app-scroll\">…</div> from <div class=\"drawer-scrim\">…</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    56 × waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"drawer-grid app-scroll\">…</div> from <div class=\"drawer-scrim\">…</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n    - waiting for element to be visible, enabled and stable\n  - element was detached from the DOM, retrying\n"
+    "error": "locator.waitFor: Timeout 8000ms exceeded.\nCall log:\n  - waiting for locator('.calc-app') to be visible\n"
   },
   {
     "capture": "06-glyph-back",
@@ -53,16 +53,16 @@
     "clientWidth": 320,
     "horizontalOverflow": false,
     "frame": {
-      "left": 102,
-      "right": 356,
-      "top": 158,
-      "bottom": 710
+      "left": 33,
+      "right": 287,
+      "top": 8,
+      "bottom": 560
     },
     "screen": {
       "width": 242,
       "height": 539
     },
-    "frameFitsViewport": false
+    "frameFitsViewport": true
   },
   {
     "capture": "08-small-viewport",
