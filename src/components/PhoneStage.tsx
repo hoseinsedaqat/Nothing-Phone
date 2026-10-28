@@ -150,7 +150,7 @@ export default function PhoneStage() {
     setActivity((a) => a + 1);
     start.current = { ...toLocal(e.clientX, e.clientY), t: Date.now() };
   };
-  const onPointerUp = (e: RPointerEvent) => {
+  const finishPointer = (e: RPointerEvent) => {
     if (!start.current) return;
     const end = toLocal(e.clientX, e.clientY);
     const dx = end.x - start.current.x;
@@ -250,13 +250,21 @@ export default function PhoneStage() {
             className="phone-screen"
             ref={screenRef}
             onPointerDown={onPointerDown}
-            onPointerUp={onPointerUp}
+            onPointerUp={finishPointer}
+            onPointerCancel={finishPointer}
           >
             {/* punch-hole camera */}
             <div className="punch-hole" />
             {/* edge-back gesture zones */}
             <div className="gesture-edge left" />
             <div className="gesture-edge right" />
+            {/*
+              Touch-capture hot zones: touch-action:none stops the browser from
+              hijacking vertical drags for app-content scrolling (which fired
+              pointercancel and swallowed the shade/home gesture inside apps).
+            */}
+            <div className="gesture-hotzone top" style={{ touchAction: 'none' }} aria-hidden />
+            <div className="gesture-hotzone bottom" style={{ touchAction: 'none' }} aria-hidden />
             {/* curved-glass reflection, purely decorative */}
             <div className="glass-sheen" aria-hidden />
 
