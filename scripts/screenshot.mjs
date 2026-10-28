@@ -140,14 +140,20 @@ for (const vp of VIEWPORTS) {
     });
 
     await guarded('06-glyph-back', async () => {
-      // On phone viewports the stage controls collapse behind a toggle.
-      await page.getByRole('button', { name: 'Stage controls' }).click().catch(() => {});
-      await page.getByRole('button', { name: 'Flip phone' }).click();
+      // Programmatic click works even when the controls are collapsed
+      // (display:none) on phone viewports, so the capture never depends
+      // on the toggle's open state.
+      const clickStageButton = (label) => page.evaluate((name) => {
+        const btn = [...document.querySelectorAll('.stage-controls button')]
+          .find((b) => b.getAttribute('aria-label') === name);
+        if (!btn) throw new Error(`stage button not found: ${name}`);
+        btn.click();
+      }, label);
+      await clickStageButton('Flip phone');
       await page.waitForTimeout(800);
       await page.screenshot({ path: join(out, '06-glyph-back.png') });
-      await page.getByRole('button', { name: 'Front view' }).click();
+      await clickStageButton('Front view');
       await page.waitForTimeout(500);
-      await page.getByRole('button', { name: 'Stage controls' }).click().catch(() => {});
     });
 
     await guarded('07-always-on-display', async () => {

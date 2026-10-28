@@ -345,7 +345,7 @@
      helper buttons collapse behind a single toggle and expand as a
      floating popover instead of permanently covering the screen. */
   .stage-controls { right: 8px; top: 8px; }
-  .stage-controls-toggle {
+  .stage-controls .stage-controls-toggle {
     display: flex;
     width: 34px;
     height: 34px;
