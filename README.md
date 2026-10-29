@@ -90,7 +90,7 @@ composites. The machine-readable responsive report lives next to them at
 <td align="center" colspan="3"><img src="docs/screenshots/10-landscape-stage.png" alt="Landscape phone viewport at 844 by 390" width="420"><br><sub>Landscape · 844×390, frame fully visible</sub></td>
 </tr>
 <tr>
-<td align="center" colspan="3"><img src="docs/screenshots/11-wide-viewport.png" alt="Wide laptop viewport at 1536 by 864 with helper text fully inside the frame" width="420"><br><sub>Wide laptop · 1536×864, helper text wraps inside the viewport</sub></td>
+<td align="center" colspan="3"><img src="docs/screenshots/11-wide-viewport.png" alt="Wide laptop viewport at 1536 by 864 with the device frame centered and fully visible" width="420"><br><sub>Wide laptop · 1536×864, frame centered with clean side gutters</sub></td>
 </tr>
 </table>
 
@@ -345,8 +345,8 @@ Pushes to `arena/**` branches (plus manual dispatch) trigger
 `.github/workflows/screenshots.yml`: it builds the app, runs Playwright Chromium against the
 production preview at **390×844, 320×568, 844×390 (landscape), 1440×900 and 1536×864 (wide laptop)**,
 writes eleven real-render PNGs plus `docs/screenshots/responsive-audit.json` (horizontal-overflow,
-frame-fit, screen-size and helper-text clipping checks — any violation fails the job), and commits
-the refreshed captures back to the branch. The README gallery above is generated
+frame-fit and screen-size checks — any violation fails the job), and commits the refreshed
+captures back to the branch. The README gallery above is generated
 entirely from these genuine captures — no mockup or placeholder imagery.
 
 The 1280×640 social banner at `docs/social-preview.png` (a designed OG/link-preview asset, not a

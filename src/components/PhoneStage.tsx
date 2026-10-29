@@ -341,10 +341,6 @@ export default function PhoneStage() {
           </button>
         </div>
       </div>
-      <p className="stage-hint">
-        Nothing Phone (3) simulator · drag from top for notifications · swipe up for home/drawer ·
-        edges to go back · Esc = back
-      </p>
     </div>
   );
 }
